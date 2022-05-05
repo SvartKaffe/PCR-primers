@@ -17,25 +17,25 @@ def find_primers(sequence, temp):
             if base == "A":
                 if sum + 2 <= temp:
                     sum += 2
-                    primer = primer + base
+                    primer += base
                 else:
                     break
             elif base == "T":
                 if sum + 2 <= temp:
                     sum += 2
-                    primer = primer + base
+                    primer += base
                 else:
                     break
             elif base == "G":
                 if sum + 4 <= temp:
                     sum += 4
-                    primer = primer + base
+                    primer += base
                 else:
                     break
             elif base == "C":
                 if sum + 4 <= temp:
                     sum += 4
-                    primer = primer + base
+                    primer += base
                 else:
                     break
 
