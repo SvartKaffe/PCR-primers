@@ -22,7 +22,7 @@ class Sequence:
 
 if __name__ == "__main__":
     object1 = Sequence()
-    object1.identify_primers()
+    object1.primers()
     object1.read_sequence("test.fasta")
 
 
