@@ -1,14 +1,15 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
+import re
 
-# TODO: save primers in dictionary together with their start index
+# TODO: save primers in dictionary together with their start index, length etc
 # TODO: should the index for the reverse strand be reversed?
-# random comment
 
 
 def find_primers(sequence, temp):
     i = 0
     primers = []
+    pattern = re.compile("(C|G)(C|G)(C|G)")
     while i <= len(sequence):
         sum = 0
         primer = ""
@@ -41,6 +42,8 @@ def find_primers(sequence, temp):
         primer_length = len(primer)
         g_count = primer.count("G")
         c_count = primer.count("C")
+        primer_end = primer[-3:]
+        m = pattern.match(primer_end)
         if g_count > 0 and c_count > 0:
             gc_ratio = (g_count + c_count) / primer_length
         else:
@@ -52,6 +55,7 @@ def find_primers(sequence, temp):
                 and (primer[-1] == "G"
                 or primer[-1] == "C")
                 and (0.4 <= gc_ratio <= 0.6)
+                and not m
         )
 
         if primer_conditions:
