@@ -22,6 +22,9 @@ class Sequence:
         self.frw_primers = find_primers(self.frw_sequence, temp)
         self.rvs_primers = find_primers(self.rvs_sequence, temp, reverse=True)
 
+    def align_primers(self):
+        print("soon to come tm")
+
 
 if __name__ == "__main__":
     object1 = Sequence()
