@@ -1,5 +1,7 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
+import re
+from primer_algorithm import find_primers
 
 
 class Sequence:
@@ -16,14 +18,14 @@ class Sequence:
             self.rvs_sequence = sequence.reverse_complement()
             self.sequence_length = len(sequence)
 
-    def primers(self):
-        print()
+    def primers(self, temp):
+        self.frw_primers = find_primers(self.frw_sequence, temp)
+        self.rvs_primers = find_primers(self.rvs_sequence, temp, reverse=True)
 
 
 if __name__ == "__main__":
     object1 = Sequence()
-    object1.primers()
-    object1.read_sequence("test.fasta")
-
-
-
+    object1.read_sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
+    object1.primers(60)
+    print(object1.frw_primers, "\n")
+    print(object1.rvs_primers)
