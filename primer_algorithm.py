@@ -4,6 +4,7 @@ import re
 
 
 def find_primers(sequence, temp, reverse=False):
+    # TODO: make DNA circular
     i = 0
     primers = {}
     duplicate_primers = []
@@ -83,6 +84,7 @@ def find_primers(sequence, temp, reverse=False):
 
 
 def unique_primers(sequence, primers, delta_t):
+    # TODO: Figure out how to find unique primers
     print()
 
 
