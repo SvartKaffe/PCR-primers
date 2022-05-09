@@ -80,5 +80,5 @@ if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
     test = "ATGTCAATGGCTATCGTCACTATT"
-    a = find_primers(sequence2, 60, reverse=True)
-    print(a)
+    a = find_primers(sequence2, 60)
+    print(len(a))
