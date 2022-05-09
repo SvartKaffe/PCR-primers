@@ -73,6 +73,8 @@ def find_primers(sequence, temp, reverse=False):
         i += 1
     return primers
 
+def unique_primers(sequence, primers, delta_t):
+    print()
 
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
