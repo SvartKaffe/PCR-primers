@@ -9,4 +9,4 @@ def random_dna(length):
 
 
 if __name__ == "__main__":
-    print(random_dna(200))
+    print(random_dna(1000))

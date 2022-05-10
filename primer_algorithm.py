@@ -60,6 +60,7 @@ def find_primers(sequence, temp, reverse=False):
         primer_conditions = (
                 primer_length > temp//4
                 and (primer[-1] == "G" or primer[-1] == "C")
+                and sum == temp
                 and (0.4 <= gc_ratio <= 0.6)
                 and not m
         )
@@ -76,24 +77,55 @@ def find_primers(sequence, temp, reverse=False):
 
         i += 1
     # Removes any primers found multiple times in the sequence
-    for item in duplicate_primers:
-        if item in primers.keys():
-            primers.pop(item)
+    for i in duplicate_primers:
+        if i in primers.keys():
+            primers.pop(i)
 
-    return primers, duplicate_primers
+    return primers
 
 
-def unique_primers(sequence, primers, delta_t):
+def unique_primers(primers, delta_t):
     # TODO: Figure out how to find unique primers
-    print()
+    # TODO: compare primers, if any primer is within delta_t of another, remove both
+    # TODO: primer can be longer than primer2, fix with min value of length (primer or primer2)
+    new_primers = primers.copy()
+
+    for primer, values in primers.items():
+        for primer2 in primers:
+            if primer == primer2:
+                print("fix this, nothing should happen")
+            else:
+                i = 0
+                temp_difference = 0
+                while i <= len(primer):
+                    if primer[i] != primer2[i]:
+                        if primer2[i] == ("A" or "T"):
+                            temp_difference += 2
+                        else:
+                            temp_difference += 4
+
+                    if temp_difference > delta_t:
+                        break
+
+                    i += 1
+
+                if temp_difference < delta_t:
+                    print("hejsan")
+                    new_primers.pop(primer)
+                    new_primers.pop(primer2)
+                    break
+
+    return new_primers
 
 
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
-    test = "ATGTCAATGGCTATCGTCACTATTGTACTTAGCCAATTAG"
-    a,b = find_primers(sequence2, 60)
+    test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCTGGCGTTTTCACCCTATTTGTACCGACCATAGAGGGCGCCTGCGTACTCGAGGAAAAAGACCTCCTACCCCTCATGATTCGAGTCGCCCGACCTCAACAATTCCTATTATAGGTTGATCTACTCGAGTCACACTAACCCGTTACTCGAACACGGATTGGTCGGATCATCACGGTGCAAGTAGGACTAAAAAATAACAGTAGTCAATAATATCAACTTAGGGTTGATACGTTACCCATGCATGTTAGACCTACTAAGCTTTCCTGGCAGCCCGTTCTGTACGAAAGTGACTGAGCTTGCCTGCCCGAACATGTCCACGTTGAGCGAGTTTTTAACTCCGTCAGGTTGCCCGTATAGGTGGTATTGCTATCCGCAATAATGGGCGCCAGGTAATTAACGCATATAACCGACCCCCCGCGCTCCGGTTGTTATAAGCCTCGGCAATGTACTACATTCGGTATCGCTGGAACCTTTATGCCACCAAGAGTCCGACTTCCCCGTGTTGCGAGACGCACGCATGACACCGGGTACTCGTTGGCAGGAATTTGCTGAGTTGTACTGTTTGTACGTTGTCCTCTTATAACTTTCAAGTTACAACTTTTCAAATGCTACGAGGGTTAAACTTATGGTGTATCAGAATAAACAATCAGGCGCCCTCGAAACAAGTGAACTTTTATAATACGATAAAACGATTCATGAGCCATTTACTGGTTCGCCCCTCAATACCAGCGCCGCTAAAATGTCTGATGACCCACGTGCTATTTTTCTAGCGCAGTCATAGTCACGGGACAAAGCTCCAACGTAGAGGACGGGCTAAGTCGCGTAAAACGCCAACCGAAGTCAAGGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
+    a = find_primers(test, 60)
     print(len(a))
-    print('ACCAACAGCACGTCTGAAAC' in a.keys())
+    abc = unique_primers(a, 50)
+    print(len(abc))
+
 
 
