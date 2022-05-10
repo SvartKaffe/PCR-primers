@@ -1,7 +1,7 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
 import re
-from primer_algorithm import find_primers
+from primer_algorithms import find_primers
 
 
 class Sequence:
