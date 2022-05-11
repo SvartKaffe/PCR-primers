@@ -85,19 +85,17 @@ def find_primers(sequence, temp, reverse=False):
 
 
 def unique_primers(primers, delta_t):
-    # TODO: Figure out how to find unique primers
-    # TODO: compare primers, if any primer is within delta_t of another, remove both
-    # TODO: primer can be longer than primer2, fix with min value of length (primer or primer2)
-    new_primers = primers.copy()
+    # checks all primers against all other primers and sees if they are within delta_t of each other
+    new_primers = {}
 
     for primer, values in primers.items():
+        good_primer = True
         for primer2 in primers:
-            if primer == primer2:
-                print("fix this, nothing should happen")
-            else:
+            if not primer == primer2:
                 i = 0
                 temp_difference = 0
-                while i <= len(primer):
+                min_value = min(len(primer), len(primer2)) - 1
+                while i <= min_value:
                     if primer[i] != primer2[i]:
                         if primer2[i] == ("A" or "T"):
                             temp_difference += 2
@@ -108,12 +106,12 @@ def unique_primers(primers, delta_t):
                         break
 
                     i += 1
-
                 if temp_difference < delta_t:
-                    print("hejsan")
-                    new_primers.pop(primer)
-                    new_primers.pop(primer2)
+                    good_primer = False
                     break
+
+        if good_primer:
+            new_primers[primer] = values
 
     return new_primers
 
@@ -131,9 +129,9 @@ if __name__ == "__main__":
            "CAGAATAAACAATCAGGCGCCCTCGAAACAAGTGAACTTTTATAATACGATAAAACGATTCATGAGCCATTTACTGGTTCGCCCCTCAATACCAGCGCCGCTAAA" \
            "ATGTCTGATGACCCACGTGCTATTTTTCTAGCGCAGTCATAGTCACGGGACAAAGCTCCAACGTAGAGGACGGGCTAAGTCGCGTAAAACGCCAACCGAAGTCAA" \
            "GGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
-    a = find_primers(test, 60)
+    a = find_primers(sequence2, 60)
     print(len(a))
-    abc = unique_primers(a, 50)
+    abc = unique_primers(a, 10)
     print(len(abc))
 
 

@@ -1,7 +1,7 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
 import re
-from primer_algorithms import find_primers
+from primer_algorithms import find_primers, unique_primers
 
 
 class Sequence:
@@ -22,13 +22,15 @@ class Sequence:
         self.frw_primers = find_primers(self.frw_sequence, temp)
         self.rvs_primers = find_primers(self.rvs_sequence, temp, reverse=True)
 
-    def align_primers(self):
-        print("soon to come tm")
+    def align_primer(self, delta_t):
+        self.frw_primers = unique_primers(self.frw_primers, delta_t)
+        self.rvs_primers = unique_primers(self.rvs_primers, delta_t)
 
 
 if __name__ == "__main__":
     object1 = Sequence()
     object1.read_sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
     object1.primers(60)
-    print(object1.frw_primers, "\n")
-    print(object1.rvs_primers)
+    print(len(object1.frw_primers), len(object1.rvs_primers))
+    object1.align_primer(10)
+    print(len(object1.frw_primers), len(object1.rvs_primers))
