@@ -116,6 +116,24 @@ def unique_primers(primers, delta_t):
     return new_primers
 
 
+def primer_alignment(sequence, primers, delta_t):
+    good_primers = {}
+
+    for primer, values in primers.items():
+        i = 0
+        window = len(primer)
+        while i <= len(sequence):
+            temp_difference = 0
+            sequence_slice = sequence[i:i+window]
+            for j in range(len(primer)):
+                # TODO: look at hamming distance
+
+
+
+
+
+
+
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
