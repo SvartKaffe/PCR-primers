@@ -32,5 +32,6 @@ if __name__ == "__main__":
     object1.read_sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
     object1.primers(60)
     print(len(object1.frw_primers), len(object1.rvs_primers))
-    object1.align_primer(10)
-    print(len(object1.frw_primers), len(object1.rvs_primers))
+    print(list(object1.frw_primers.keys())[1], list(object1.rvs_primers.keys())[1])
+    #object1.align_primer(10)
+    #print(len(object1.frw_primers), len(object1.rvs_primers))

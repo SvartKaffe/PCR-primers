@@ -1,6 +1,7 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
 import re
+import time
 
 
 def find_primers(sequence, temp, reverse=False):
@@ -116,27 +117,46 @@ def unique_primers(primers, delta_t):
     return new_primers
 
 
-def primer_alignment(sequence, primers, delta_t):
+def primer_alignment(sequence, primers, delta_t, temp):
     good_primers = {}
-
+    melting_temp = temp - delta_t
     for primer, values in primers.items():
+        appearances = 0
         i = 0
         window = len(primer)
         while i <= len(sequence):
-            temp_difference = 0
+            binding_temp = 0
             sequence_slice = sequence[i:i+window]
+            if len(sequence_slice) != window:
+                break
             for j in range(len(primer)):
-                # TODO: look at hamming distance
+                nucleotide, score = complement(primer[j])
+                if sequence_slice[j] == nucleotide:
+                    binding_temp += score
+            if binding_temp > melting_temp:
+                appearances += 1
+            if appearances > 1:
+                good_primers[primer] = values
+                break
+            i += 1
+    return good_primers
 
 
-
-
-
+def complement(nucleotide):
+    if nucleotide == "A":
+        return "T", 2
+    if nucleotide == "T":
+        return "A", 2
+    if nucleotide == "G":
+        return "C", 4
+    if nucleotide == "C":
+        return "G", 4
 
 
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
+
     test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCT" \
            "GGCGTTTTCACCCTATTTGTACCGACCATAGAGGGCGCCTGCGTACTCGAGGAAAAAGACCTCCTACCCCTCATGATTCGAGTCGCCCGACCTCAACAATTCCTA" \
            "TTATAGGTTGATCTACTCGAGTCACACTAACCCGTTACTCGAACACGGATTGGTCGGATCATCACGGTGCAAGTAGGACTAAAAAATAACAGTAGTCAATAATAT" \
@@ -147,10 +167,19 @@ if __name__ == "__main__":
            "CAGAATAAACAATCAGGCGCCCTCGAAACAAGTGAACTTTTATAATACGATAAAACGATTCATGAGCCATTTACTGGTTCGCCCCTCAATACCAGCGCCGCTAAA" \
            "ATGTCTGATGACCCACGTGCTATTTTTCTAGCGCAGTCATAGTCACGGGACAAAGCTCCAACGTAGAGGACGGGCTAAGTCGCGTAAAACGCCAACCGAAGTCAA" \
            "GGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
+
+    test2 = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCG"
+
+    start = time.time()
     a = find_primers(sequence2, 60)
     print(len(a))
-    abc = unique_primers(a, 10)
-    print(len(abc))
+    #abc = unique_primers(a, 10)
+    #print(len(abc))
+    print(start)
+    b = primer_alignment(sequence2, a, 15, 60)
+    print(len(b))
+    end = time.time()
+    print(end - start)
 
 
 
