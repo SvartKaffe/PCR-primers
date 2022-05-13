@@ -1,5 +1,6 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
+from Bio.SeqUtils.lcc import lcc_mult, lcc_simp
 import re
 import time
 
@@ -124,7 +125,7 @@ def primer_alignment(sequence, primers, delta_t, temp):
         appearances = 0
         i = 0
         window = len(primer)
-        while i <= len(sequence):
+        while i <= len(sequence) and appearances <= 1:
             binding_temp = 0
             sequence_slice = sequence[i:i+window]
             if len(sequence_slice) != window:
@@ -135,10 +136,10 @@ def primer_alignment(sequence, primers, delta_t, temp):
                     binding_temp += score
             if binding_temp > melting_temp:
                 appearances += 1
-            if appearances > 1:
-                good_primers[primer] = values
-                break
             i += 1
+        if appearances <= 1:
+            good_primers[primer] = values
+
     return good_primers
 
 
@@ -168,15 +169,12 @@ if __name__ == "__main__":
            "ATGTCTGATGACCCACGTGCTATTTTTCTAGCGCAGTCATAGTCACGGGACAAAGCTCCAACGTAGAGGACGGGCTAAGTCGCGTAAAACGCCAACCGAAGTCAA" \
            "GGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
 
-    test2 = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCG"
+    test2 = "AAGCCTCGGCAATGTACTACATTCGGTAC"
 
     start = time.time()
     a = find_primers(sequence2, 60)
     print(len(a))
-    #abc = unique_primers(a, 10)
-    #print(len(abc))
-    print(start)
-    b = primer_alignment(sequence2, a, 15, 60)
+    b = primer_alignment(sequence2, a, 24, 60)
     print(len(b))
     end = time.time()
     print(end - start)
