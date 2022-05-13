@@ -4,6 +4,8 @@ from Bio.SeqUtils.lcc import lcc_mult, lcc_simp
 import re
 import time
 
+# TODO: look at this https://www.youtube.com/watch?v=QkwPf3fcxBs
+# TODO: remove low complexity regions from sequence, lower amount of potential primers
 
 def find_primers(sequence, temp, reverse=False):
     # TODO: make DNA circular
@@ -174,7 +176,7 @@ if __name__ == "__main__":
     start = time.time()
     a = find_primers(sequence2, 60)
     print(len(a))
-    b = primer_alignment(sequence2, a, 24, 60)
+    b = primer_alignment(sequence2, a, 20, 60)
     print(len(b))
     end = time.time()
     print(end - start)
