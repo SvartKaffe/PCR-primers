@@ -4,8 +4,9 @@ from Bio.SeqUtils.lcc import lcc_mult, lcc_simp
 import re
 import time
 
-# TODO: look at this https://www.youtube.com/watch?v=QkwPf3fcxBs
+# TODO: look at this https://www.youtube.com/watch?v=QkwPf3fcxBs and https://jszym.com/blog/dna_protein_complexity/
 # TODO: remove low complexity regions from sequence, lower amount of potential primers
+
 
 def find_primers(sequence, temp, reverse=False):
     # TODO: make DNA circular
