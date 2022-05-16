@@ -121,23 +121,29 @@ def unique_primers(primers, delta_t):
     return new_primers
 
 
-def primer_alignment(sequence, primers, delta_t, temp):
+def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp):
     good_primers = {}
     melting_temp = temp - delta_t
     for primer, values in primers.items():
         appearances = 0
         i = 0
         window = len(primer)
-        while i <= len(sequence) and appearances <= 1:
-            binding_temp = 0
-            sequence_slice = sequence[i:i+window]
-            if len(sequence_slice) != window:
+        while i <= len(frw_sequence) and appearances <= 1:
+            frw_binding_temp = 0
+            rvs_binding_temp = 0
+            frw_sequence_slice = frw_sequence[i:i + window]
+            rvs_sequence_slice = rvs_sequence[i:i + window]
+            if len(frw_sequence_slice) != window:
                 break
             for j in range(len(primer)):
                 nucleotide, score = complement(primer[j])
-                if sequence_slice[j] == nucleotide:
-                    binding_temp += score
-            if binding_temp > melting_temp:
+                if frw_sequence_slice[j] == nucleotide:
+                    frw_binding_temp += score
+                if rvs_sequence_slice[j] == nucleotide:
+                    rvs_binding_temp += score
+            if frw_binding_temp > melting_temp:
+                appearances += 1
+            if rvs_binding_temp > melting_temp:
                 appearances += 1
             i += 1
         if appearances <= 1:
@@ -160,6 +166,7 @@ def complement(nucleotide):
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
+        sequence3 = sequence1.reverse_complement()
 
     test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCT" \
            "GGCGTTTTCACCCTATTTGTACCGACCATAGAGGGCGCCTGCGTACTCGAGGAAAAAGACCTCCTACCCCTCATGATTCGAGTCGCCCGACCTCAACAATTCCTA" \
@@ -175,12 +182,25 @@ if __name__ == "__main__":
     test2 = "AAGCCTCGGCAATGTACTACATTCGGTAC"
 
     start = time.time()
-    a = find_primers(sequence2, 60)
-    print(len(a))
-    b = primer_alignment(sequence2, a, 20, 60)
-    print(len(b))
+
+    forward = find_primers(sequence2, 60)
+    reverse = find_primers(sequence3, 60, reverse=True)
+
+    print(len(forward), "number of forward primers")
+    print(len(reverse), "number of reverse primers")
+
+    forward_alignment = primer_alignment(sequence2, sequence3, forward, 22, 60)
+    reverse_alignment = primer_alignment(sequence2, sequence3, reverse, 22, 60)
+
+    print(len(forward_alignment), "number of forward primers after alignment")
+    print(len(reverse_alignment), "number of reverse primers after alignment")
+
     end = time.time()
     print(end - start)
+    print("\n")
+
+    print(forward_alignment)
+    print(reverse_alignment)
 
 
 
