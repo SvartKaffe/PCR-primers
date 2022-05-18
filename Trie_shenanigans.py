@@ -126,32 +126,6 @@ def same_peptide(pep1:list, pep2:list):
     return True
 
 
-def trie_primers(sequence, temp):
-    i = 0
-    primers = {}
-    trie_dict = {}
-    while i <= len(sequence):
-        sequence_window = sequence[i:i+20]
-
-        # Primer computations and conditions
-        primer_length = len(primer)
-        primer_conditions = (
-                primer_length > temp//4
-        )
-
-        if primer_conditions:
-            if primer_length not in primers:
-                primers[primer_length] = [primer]
-            else:
-                primers[primer_length].append(primer)
-
-        i += 1
-    for length, primer_list in primers.items():
-        trie_dict[length] = build_trie_from_list(primer_list)
-
-    return trie_dict, primers
-
-
 if __name__ == '__main__':
 
     test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCT" \
@@ -167,13 +141,5 @@ if __name__ == '__main__':
 
     test2 = "AAGCCTCGGCAATGTACTACATTCGGTAC"
 
-    trie, primers = trie_primers(test, 60)
-    good_primers = find_primers(test, 60)
-    print(primers)
-    print(good_primers)
 
-    for primer in good_primers.keys():
-        length = len(primer)
-        results = search_hamming_d(trie[length], peptide=primer, d=5, aa_match_function=aa_match)
 
-    print(f"the results: {results}")

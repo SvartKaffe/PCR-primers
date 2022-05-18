@@ -153,6 +153,22 @@ def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp):
     return good_primers
 
 
+def trie_primers(sequence, length):
+    i = 0
+    primers = []
+    while i <= len(sequence):
+        primer = sequence[i:i+length]
+        # Primer computations and conditions
+        primer_conditions = (
+                len(primer) == length
+        )
+        if primer_conditions:
+            primers.append(primer)
+        i += 1
+
+    return primers
+
+
 def complement(nucleotide):
     if nucleotide == "A":
         return "T", 2

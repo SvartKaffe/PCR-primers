@@ -18,13 +18,8 @@ class Sequence:
             self.rvs_sequence = sequence.reverse_complement()
             self.sequence_length = len(sequence)
 
-    def primers(self, temp):
-        self.frw_primers = find_primers(self.frw_sequence, temp)
-        self.rvs_primers = find_primers(self.rvs_sequence, temp, reverse=True)
+    def build_trie(self):
 
-    def align_primer(self, delta_t):
-        self.frw_primers = unique_primers(self.frw_primers, delta_t)
-        self.rvs_primers = unique_primers(self.rvs_primers, delta_t)
 
 
 if __name__ == "__main__":
