@@ -6,16 +6,16 @@ import time
 
 
 class Sequence:
-    def __init__(self):
-        self.frw_sequence = None
-        self.frw_primers = []
-        self.rvs_sequence = None
-        self.rvs_primers = []
-
-    def read_sequence(self, file):
+    def __init__(self, file):
         for sequence in SeqIO.parse(file, "fasta"):
             self.frw_sequence = sequence.seq
             self.rvs_sequence = sequence.reverse_complement()
+
+    def get_frw_sequence(self):
+        return self.frw_sequence
+
+    def get_rvs_sequence(self):
+        return self.rvs_sequence
 
     def build_trie(self, length):
         forward_primers = trie_primers(self.frw_sequence, length)
@@ -32,8 +32,7 @@ class Sequence:
 
 if __name__ == "__main__":
     start = time.time()
-    object1 = Sequence()
-    object1.read_sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
+    object1 = Sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
     trie = object1.build_trie(20)
     forward = find_primers(object1.frw_sequence, 60)
     reverse = find_primers(object1.rvs_sequence, 60, reverse=True)

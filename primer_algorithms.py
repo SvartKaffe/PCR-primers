@@ -9,7 +9,7 @@ import time
 # TODO: remove low complexity regions from sequence, lower amount of potential primers
 
 
-def find_primers(sequence, temp, reverse=False):
+def find_primers(sequence, temp, length, reverse=False):
     # TODO: make DNA circular
     i = 0
     primers = {}
@@ -64,7 +64,7 @@ def find_primers(sequence, temp, reverse=False):
             gc_ratio = 0
 
         primer_conditions = (
-                primer_length == 20  # change depending on primer size in trie
+                primer_length == length  # change depending on primer size in trie
                 and (primer[-1] == "G" or primer[-1] == "C")
                 and sum == temp
                 and (0.4 <= gc_ratio <= 0.6)
