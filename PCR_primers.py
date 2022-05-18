@@ -1,7 +1,7 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
-import re
-from primer_algorithms import find_primers, unique_primers
+from primer_algorithms import trie_primers
+from Trie import Trie, TrieNode
 
 
 class Sequence:
@@ -10,23 +10,27 @@ class Sequence:
         self.frw_primers = []
         self.rvs_sequence = None
         self.rvs_primers = []
-        self.sequence_length = 0
 
     def read_sequence(self, file):
         for sequence in SeqIO.parse(file, "fasta"):
             self.frw_sequence = sequence.seq
             self.rvs_sequence = sequence.reverse_complement()
-            self.sequence_length = len(sequence)
 
-    def build_trie(self):
+    def build_trie(self, length):
+        forward_primers = trie_primers(self.frw_sequence, length)
+        reverse_primers = trie_primers(self.rvs_sequence, length)
+        trie = Trie()
+        # add sequences to trie
+        for i in forward_primers:
+            trie.insert(i)
+        for j in reverse_primers:
+            trie.insert(j)
 
+        return trie
 
 
 if __name__ == "__main__":
     object1 = Sequence()
     object1.read_sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
-    object1.primers(60)
-    print(len(object1.frw_primers), len(object1.rvs_primers))
-    print(list(object1.frw_primers.keys())[1], list(object1.rvs_primers.keys())[1])
-    #object1.align_primer(10)
-    #print(len(object1.frw_primers), len(object1.rvs_primers))
+    object1.build_trie(20)
+

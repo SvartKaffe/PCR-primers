@@ -158,7 +158,6 @@ def trie_primers(sequence, length):
     primers = []
     while i <= len(sequence):
         primer = sequence[i:i+length]
-        # Primer computations and conditions
         primer_conditions = (
                 len(primer) == length
         )
