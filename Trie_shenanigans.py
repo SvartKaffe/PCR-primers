@@ -130,33 +130,7 @@ def trie_primers(sequence, temp):
     primers = {}
     trie_dict = {}
     while i <= len(sequence):
-        sum = 0
-        primer = ""
-        for base in sequence[i:]:
-            if base == "A":
-                if sum + 2 <= temp:
-                    sum += 2
-                    primer += base
-                else:
-                    break
-            elif base == "T":
-                if sum + 2 <= temp:
-                    sum += 2
-                    primer += base
-                else:
-                    break
-            elif base == "G":
-                if sum + 4 <= temp:
-                    sum += 4
-                    primer += base
-                else:
-                    break
-            elif base == "C":
-                if sum + 4 <= temp:
-                    sum += 4
-                    primer += base
-                else:
-                    break
+        sequence_window = sequence[i:i+20]
 
         # Primer computations and conditions
         primer_length = len(primer)
