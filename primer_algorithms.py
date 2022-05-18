@@ -1,6 +1,5 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
-from Bio.SeqUtils.lcc import lcc_mult, lcc_simp
 import re
 import time
 
@@ -64,7 +63,7 @@ def find_primers(sequence, temp, length, reverse=False):
             gc_ratio = 0
 
         primer_conditions = (
-                primer_length == length  # change depending on primer size in trie
+                primer_length == length
                 and (primer[-1] == "G" or primer[-1] == "C")
                 and sum == temp
                 and (0.4 <= gc_ratio <= 0.6)
@@ -153,17 +152,36 @@ def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp):
     return good_primers
 
 
-def trie_primers(sequence, length):
+def trie_primers(sequence, length, reverse=False):
     i = 0
-    primers = []
+    primers = {}
+    duplicate_primers = []
     while i <= len(sequence):
         primer = sequence[i:i+length]
         primer_conditions = (
                 len(primer) == length
         )
+        primer_length = len(primer)
+        if reverse:
+            start = len(sequence) - i
+            stop = start + 1 - primer_length
+        else:
+            start = i+1
+            stop = i+primer_length
+
         if primer_conditions:
-            primers.append(primer)
+            if (primer in primers.keys()) and (primer not in duplicate_primers):
+                duplicate_primers.append(primer)
+            if (primer not in primers.keys()) and (primer not in duplicate_primers):
+                primers[primer] = {"length": primer_length,
+                                   "start": start,
+                                   "stop": stop,
+                                   }
         i += 1
+    # Removes any primers found multiple times in the sequence
+    for i in duplicate_primers:
+        if i in primers.keys():
+            primers.pop(i)
 
     return primers
 
@@ -179,10 +197,20 @@ def complement(nucleotide):
         return "G", 4
 
 
+def temp_calc(string:str):
+    temp = 0
+    for i in string:
+        if i in ("A", "T"):
+            temp += 2
+        if i in ("C", "G"):
+            temp += 4
+    return temp
+
+
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
-        sequence3 = sequence1.reverse_complement()
+        sequence3 = sequence1.reverse_complement().seq
 
     test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCT" \
            "GGCGTTTTCACCCTATTTGTACCGACCATAGAGGGCGCCTGCGTACTCGAGGAAAAAGACCTCCTACCCCTCATGATTCGAGTCGCCCGACCTCAACAATTCCTA" \
@@ -218,7 +246,7 @@ if __name__ == "__main__":
     #print(forward_alignment)
     #print(reverse_alignment)
 
-    test_primers = find_primers(sequence2, 60)
+    test_primers = find_primers(test, 60, 20)
     print(len(test_primers))
 
     length_list = []
