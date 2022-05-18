@@ -116,5 +116,5 @@ if __name__ == "__main__":
     t.insert("ATGCC")
     t.insert("AGCGT")
 
-    debug = t.hamming_distance("CTAGT", 10)
+    debug = t.hamming_distance("GGGGG", 10)
     print(debug)

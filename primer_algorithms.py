@@ -64,7 +64,7 @@ def find_primers(sequence, temp, reverse=False):
             gc_ratio = 0
 
         primer_conditions = (
-                primer_length > temp//4
+                primer_length == 20  # change depending on primer size in trie
                 and (primer[-1] == "G" or primer[-1] == "C")
                 and sum == temp
                 and (0.4 <= gc_ratio <= 0.6)
@@ -197,26 +197,35 @@ if __name__ == "__main__":
 
     test2 = "AAGCCTCGGCAATGTACTACATTCGGTAC"
 
-    start = time.time()
+    #start = time.time()
 
-    forward = find_primers(sequence2, 60)
-    reverse = find_primers(sequence3, 60, reverse=True)
+    #forward = find_primers(sequence2, 60)
+    #reverse = find_primers(sequence3, 60, reverse=True)
 
-    print(len(forward), "number of forward primers")
-    print(len(reverse), "number of reverse primers")
+    #print(len(forward), "number of forward primers")
+    #print(len(reverse), "number of reverse primers")
 
-    forward_alignment = primer_alignment(sequence2, sequence3, forward, 22, 60)
-    reverse_alignment = primer_alignment(sequence2, sequence3, reverse, 22, 60)
+    #forward_alignment = primer_alignment(sequence2, sequence3, forward, 22, 60)
+    #reverse_alignment = primer_alignment(sequence2, sequence3, reverse, 22, 60)
 
-    print(len(forward_alignment), "number of forward primers after alignment")
-    print(len(reverse_alignment), "number of reverse primers after alignment")
+    #print(len(forward_alignment), "number of forward primers after alignment")
+    #print(len(reverse_alignment), "number of reverse primers after alignment")
 
-    end = time.time()
-    print(end - start)
-    print("\n")
+    #end = time.time()
+    #print(end - start)
+    #print("\n")
 
-    print(forward_alignment)
-    print(reverse_alignment)
+    #print(forward_alignment)
+    #print(reverse_alignment)
 
+    test_primers = find_primers(sequence2, 60)
+    print(len(test_primers))
 
+    length_list = []
+    for i in test_primers.values():
+        length_list.append(i["length"])
+    print(len(length_list))
+    print(length_list.count(19))
+    print(length_list.count(20))
+    print(length_list.count(21))
 
