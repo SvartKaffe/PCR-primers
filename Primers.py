@@ -1,8 +1,8 @@
 from Sequence import Sequence
 from primer_algorithms import trie_primers, temp_calc
 import re
-from Bio import SeqIO
 from Bio.SeqUtils import GC
+
 
 class Primers:
     def __init__(self, sequence: Sequence, length):

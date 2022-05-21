@@ -34,8 +34,8 @@ if __name__ == "__main__":
     start = time.time()
     object1 = Sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
     trie = object1.build_trie(20)
-    forward = find_primers(object1.frw_sequence, 60, 20)
-    reverse = find_primers(object1.rvs_sequence, 60, 20, reverse=True)
+    forward = find_primers(object1.frw_sequence, 60,)
+    reverse = find_primers(object1.rvs_sequence, 60,  reverse=True)
     print(len(forward))
     print(len(reverse))
 
@@ -52,6 +52,20 @@ if __name__ == "__main__":
     end = time.time()
     print(end-start)
     print(f"good forward primers:{len(good_frw_primers)}, good reverse primers: {len(good_rvs_primers)}")
+
+    primer_pairs = []
+    for frw_primer, frw_value in good_frw_primers.items():
+        for rvs_primer, rvs_value in good_rvs_primers.items():
+            fragment = (rvs_value["start"] - frw_value["start"])
+            pair_list = []
+            if (300 <= fragment <= 2000):
+                pair_list.append(frw_primer)
+                pair_list.append(rvs_primer)
+                pair_list.append(fragment)
+                primer_pairs.append(pair_list)
+
+    print(primer_pairs)
+
 
 
 

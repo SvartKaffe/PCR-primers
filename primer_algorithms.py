@@ -8,7 +8,7 @@ import time
 # TODO: remove low complexity regions from sequence, lower amount of potential primers
 
 
-def find_primers(sequence, temp, length, reverse=False):
+def find_primers(sequence, temp, reverse=False):
     # TODO: make DNA circular
     i = 0
     primers = {}
@@ -63,7 +63,7 @@ def find_primers(sequence, temp, length, reverse=False):
             gc_ratio = 0
 
         primer_conditions = (
-                primer_length == length
+                primer_length == 20
                 and (primer[-1] == "G" or primer[-1] == "C")
                 and sum == temp
                 and (0.4 <= gc_ratio <= 0.6)
@@ -207,8 +207,17 @@ def temp_calc(string:str):
     return temp
 
 
+def search(trie: Trie, primers, delta_t: int):
+    good_primers = {}
+    for primer, values in primers.items():
+        result = trie.hamming_distance(primer, delta_t)
+        if len(result) == 0:
+            good_primers[primer] = values
+    return good_primers
+
+
 if __name__ == "__main__":
-    for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
+    for sequence1 in SeqIO.parse("SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta", "fasta"):
         sequence2 = sequence1.seq
         sequence3 = sequence1.reverse_complement().seq
 
@@ -225,35 +234,25 @@ if __name__ == "__main__":
 
     test2 = "AAGCCTCGGCAATGTACTACATTCGGTAC"
 
-    #start = time.time()
+    start = time.time()
 
-    #forward = find_primers(sequence2, 60)
-    #reverse = find_primers(sequence3, 60, reverse=True)
+    forward = find_primers(sequence2, 60)
+    reverse = find_primers(sequence3, 60, reverse=True)
 
-    #print(len(forward), "number of forward primers")
-    #print(len(reverse), "number of reverse primers")
+    print(len(forward), "number of forward primers")
+    print(len(reverse), "number of reverse primers")
 
-    #forward_alignment = primer_alignment(sequence2, sequence3, forward, 22, 60)
-    #reverse_alignment = primer_alignment(sequence2, sequence3, reverse, 22, 60)
+    forward_alignment = primer_alignment(sequence2, sequence3, forward, 24, 60)
+    reverse_alignment = primer_alignment(sequence2, sequence3, reverse, 24, 60)
 
-    #print(len(forward_alignment), "number of forward primers after alignment")
-    #print(len(reverse_alignment), "number of reverse primers after alignment")
+    print(len(forward_alignment), "number of forward primers after alignment")
+    print(len(reverse_alignment), "number of reverse primers after alignment")
 
-    #end = time.time()
-    #print(end - start)
-    #print("\n")
+    end = time.time()
+    print(end - start)
+    print("\n")
 
-    #print(forward_alignment)
-    #print(reverse_alignment)
+    print(forward_alignment)
+    print(reverse_alignment)
 
-    test_primers = find_primers(test, 60, 20)
-    print(len(test_primers))
-
-    length_list = []
-    for i in test_primers.values():
-        length_list.append(i["length"])
-    print(len(length_list))
-    print(length_list.count(19))
-    print(length_list.count(20))
-    print(length_list.count(21))
 
