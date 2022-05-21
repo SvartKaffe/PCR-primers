@@ -21,7 +21,7 @@ class Sequence:
         forward_primers = trie_primers(self.frw_sequence, length)
         reverse_primers = trie_primers(self.rvs_sequence, length)
         trie = Trie()
-        # add sequences to trie
+        # add primers to trie
         for i in forward_primers.keys():
             trie.insert(i)
         for j in reverse_primers.keys():
@@ -57,12 +57,9 @@ if __name__ == "__main__":
     for frw_primer, frw_value in good_frw_primers.items():
         for rvs_primer, rvs_value in good_rvs_primers.items():
             fragment = (rvs_value["start"] - frw_value["start"])
-            pair_list = []
             if (300 <= fragment <= 2000):
-                pair_list.append(frw_primer)
-                pair_list.append(rvs_primer)
-                pair_list.append(fragment)
-                primer_pairs.append(pair_list)
+                pair_tuple = (frw_primer, rvs_primer, fragment)
+                primer_pairs.append(pair_tuple)
 
     print(primer_pairs)
 

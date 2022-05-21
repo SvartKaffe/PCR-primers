@@ -8,7 +8,7 @@ import time
 # TODO: remove low complexity regions from sequence, lower amount of potential primers
 
 
-def find_primers(sequence, temp, reverse=False):
+def find_primers(sequence, temp, reverse=False) -> dict:
     # TODO: make DNA circular
     i = 0
     primers = {}
@@ -89,7 +89,7 @@ def find_primers(sequence, temp, reverse=False):
     return primers
 
 
-def unique_primers(primers, delta_t):
+def unique_primers(primers, delta_t) -> dict:
     # checks all primers against all other primers and sees if they are within delta_t of each other
     new_primers = {}
 
@@ -121,7 +121,7 @@ def unique_primers(primers, delta_t):
     return new_primers
 
 
-def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp):
+def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp) -> dict:
     good_primers = {}
     melting_temp = temp - delta_t
     for primer, values in primers.items():
@@ -152,7 +152,7 @@ def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp):
     return good_primers
 
 
-def trie_primers(sequence, length, reverse=False):
+def trie_primers(sequence, length, reverse=False) -> dict:
     i = 0
     primers = {}
     duplicate_primers = []
@@ -214,6 +214,10 @@ def search(trie: Trie, primers, delta_t: int):
         if len(result) == 0:
             good_primers[primer] = values
     return good_primers
+
+
+def sort_primers():
+    print()
 
 
 if __name__ == "__main__":
