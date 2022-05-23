@@ -1,12 +1,13 @@
 from primer_algorithms import trie_primers, temp_calc
 import re
 from Bio.SeqUtils import GC
+from Sequence import Sequence
 
 
 class Primers:
     def __init__(self, sequence, length):
-        self.frw_primers = trie_primers(sequence.get_frw_sequence(), length)
-        self.rvs_primers = trie_primers(sequence.get_rvs_sequence(), length)
+        self.frw_primers = trie_primers(str(sequence.get_frw_sequence()), length)
+        self.rvs_primers = trie_primers(str(sequence.get_rvs_sequence()), length, reverse=True)
 
     def temp_selection(self, temp):
         for primer, values in list(self.frw_primers.items()):
@@ -58,7 +59,7 @@ class Primers:
 
 
 if __name__ == "__main__":
-    object1 = Sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
+    object1 = Sequence("test.fasta")
     primers = Primers(object1, 20)
     print(len(primers.get_frw_primers()))
     print(len(primers.get_rvs_primers()))
@@ -71,4 +72,12 @@ if __name__ == "__main__":
     primers.temp_selection(60)
     print(len(primers.get_frw_primers()))
     print(len(primers.get_rvs_primers()))
+
+    frw_primers = primers.get_frw_primers()
+    print(type(frw_primers))
+    key_list = list(frw_primers.keys())
+    print(key_list[0])
+    print(type(key_list[0]))
+    print(frw_primers)
+
 

@@ -42,7 +42,7 @@ if __name__ == "__main__":
            "GGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
 
     start = time.time()
-    object1 = Sequence("test.fasta")
+    object1 = Sequence("SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta")
 
     trie = object1.build_trie(20)
     forward = find_primers(object1.frw_sequence, 60,)
@@ -71,10 +71,6 @@ if __name__ == "__main__":
             if (300 <= fragment <= 2000):
                 pair_tuple = (frw_primer, rvs_primer, fragment)
                 primer_pairs.append(pair_tuple)
-
-    print(primer_pairs)
-    primer_pairs.sort(key=lambda a: a[-1])
-    print(primer_pairs)
 
 
 

@@ -208,7 +208,7 @@ def temp_calc(string: str):
     return temp
 
 
-def search(trie, primers, delta_t: int):
+def search(trie, primers: dict, delta_t: int) -> dict:
     good_primers = {}
     for primer, values in primers.items():
         result = trie.hamming_distance(primer, delta_t)
@@ -230,7 +230,7 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence):
                           and len(fragments[0]) >= 300
                           and len(fragments[-1]) >= 300
                           )
-
+            # maybe store list of fragment sizes
             if conditions:
                 pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length)
                 primer_pairs.append(pair_tuple)

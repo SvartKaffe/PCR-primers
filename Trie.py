@@ -1,5 +1,4 @@
 from primer_algorithms import complement
-from Primers import Primers
 # Trie taken from https://albertauyeung.github.io/2020/06/15/python-trie.html/
 # The recursive function is heavily inspired by https://github.com/volpato30/hamming-d-search/blob/master/trie.py
 # and https://albertauyeung.github.io/2020/06/15/python-trie.html/
