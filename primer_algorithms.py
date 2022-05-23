@@ -230,13 +230,14 @@ def sort_primers(frw_primers: dict, rvs_primers: dict):
     return primer_pairs
 
 
-def EcoRI(sequence: str):
-    sekvens = Seq(sequence)
+def EcoRI(sequence):
+    sekvens = sequence
     enzymes = RestrictionBatch(["EcoRI"])
     result = enzymes.search(sekvens)
     locations = list(result.values())
+    sekvens = str(sequence)
     location_single = [i-1 for sublist in locations for i in sublist]
-    fragments = [sequence[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
+    fragments = [sekvens[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
 
     return fragments
 
