@@ -22,5 +22,6 @@ def EcoRI(sequence):
 print("\n")
 
 ecori_test = Sequence("test.fasta")
-print(EcoRI(ecori_test.get_frw_sequence()))
+print(ecori_test.get_frw_sequence()[1])
+
 

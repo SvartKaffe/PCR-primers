@@ -1,1 +1,3 @@
-# this will be the main thingy
+# test run to see if shit works as intended
+
+

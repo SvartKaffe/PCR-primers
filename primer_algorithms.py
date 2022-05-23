@@ -217,16 +217,24 @@ def search(trie, primers, delta_t: int):
     return good_primers
 
 
-def sort_primers(frw_primers: dict, rvs_primers: dict):
+def sort_primers(frw_primers: dict, rvs_primers: dict, sequence):
     primer_pairs = []
     for frw_primer, frw_value in frw_primers.items():
         for rvs_primer, rvs_value in rvs_primers.items():
             start = frw_value["start"]
             stop = rvs_value["start"]
-            fragment = (rvs_value["start"] - frw_value["start"] + 1)
-            if (300 <= fragment <= 2000):
-                pair_tuple = (frw_primer, rvs_primer, start, stop, fragment)
+            fragment_length = (stop - start + 1)
+            fragments = EcoRI(sequence.get_frw_sequence()[start-1:stop])
+
+            conditions = (len(fragments) >= 2
+                          and len(fragments[0]) >= 300
+                          and len(fragments[-1]) >= 300
+                          )
+
+            if conditions:
+                pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length)
                 primer_pairs.append(pair_tuple)
+
     return primer_pairs
 
 
@@ -240,6 +248,7 @@ def EcoRI(sequence):
     fragments = [sekvens[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
 
     return fragments
+
 
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta", "fasta"):
