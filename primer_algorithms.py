@@ -1,5 +1,6 @@
-from Bio.Seq import Seq
 from Bio import SeqIO
+from Bio.Restriction import *
+from Bio.Seq import Seq
 import re
 import time
 
@@ -8,7 +9,7 @@ import time
 # TODO: remove low complexity regions from sequence, lower amount of potential primers
 
 
-def find_primers(sequence, temp, reverse=False) -> dict:
+def find_primers(sequence: str, temp: int, reverse=False) -> dict:
     # TODO: make DNA circular
     i = 0
     primers = {}
@@ -186,7 +187,7 @@ def trie_primers(sequence, length, reverse=False) -> dict:
     return primers
 
 
-def complement(nucleotide):
+def complement(nucleotide: str):
     if nucleotide == "A":
         return "T", 2
     if nucleotide == "T":
@@ -197,7 +198,7 @@ def complement(nucleotide):
         return "G", 4
 
 
-def temp_calc(string:str):
+def temp_calc(string: str):
     temp = 0
     for i in string:
         if i in ("A", "T"):
@@ -207,7 +208,7 @@ def temp_calc(string:str):
     return temp
 
 
-def search(trie: Trie, primers, delta_t: int):
+def search(trie, primers, delta_t: int):
     good_primers = {}
     for primer, values in primers.items():
         result = trie.hamming_distance(primer, delta_t)
@@ -216,9 +217,28 @@ def search(trie: Trie, primers, delta_t: int):
     return good_primers
 
 
-def sort_primers():
-    print()
+def sort_primers(frw_primers: dict, rvs_primers: dict):
+    primer_pairs = []
+    for frw_primer, frw_value in frw_primers.items():
+        for rvs_primer, rvs_value in rvs_primers.items():
+            start = frw_value["start"]
+            stop = rvs_value["start"]
+            fragment = (rvs_value["start"] - frw_value["start"] + 1)
+            if (300 <= fragment <= 2000):
+                pair_tuple = (frw_primer, rvs_primer, start, stop, fragment)
+                primer_pairs.append(pair_tuple)
+    return primer_pairs
 
+
+def EcoRI(sequence: str):
+    sekvens = Seq(sequence)
+    enzymes = RestrictionBatch(["EcoRI"])
+    result = enzymes.search(sekvens)
+    locations = list(result.values())
+    location_single = [i-1 for sublist in locations for i in sublist]
+    fragments = [sequence[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
+
+    return fragments
 
 if __name__ == "__main__":
     for sequence1 in SeqIO.parse("SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta", "fasta"):

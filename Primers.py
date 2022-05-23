@@ -1,11 +1,10 @@
-from Sequence import Sequence
 from primer_algorithms import trie_primers, temp_calc
 import re
 from Bio.SeqUtils import GC
 
 
 class Primers:
-    def __init__(self, sequence: Sequence, length):
+    def __init__(self, sequence, length):
         self.frw_primers = trie_primers(sequence.get_frw_sequence(), length)
         self.rvs_primers = trie_primers(sequence.get_rvs_sequence(), length)
 

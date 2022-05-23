@@ -5,7 +5,6 @@ from Primers import Primers
 # and https://albertauyeung.github.io/2020/06/15/python-trie.html/
 
 
-
 class TrieNode:
     """A node in the trie structure"""
 

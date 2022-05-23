@@ -1,4 +1,3 @@
-from Bio.Seq import Seq
 from Bio import SeqIO
 from primer_algorithms import trie_primers, find_primers
 from Trie import Trie, TrieNode
@@ -31,8 +30,20 @@ class Sequence:
 
 
 if __name__ == "__main__":
+    test = "TGACTGACTCACGGTCGTTTGTGCACGGCTTATCGCTAACCGGTGTCTGCGCACCCGGTCAATCTTTAGCGACAATACACAACCTGGTTGACAATCGCTATGCT" \
+           "GGCGTTTTCACCCTATTTGTACCGACCATAGAGGGCGCCTGCGTACTCGAGGAAAAAGACCTCCTACCCCTCATGATTCGAGTCGCCCGACCTCAACAATTCCTA" \
+           "TTATAGGTTGATCTACTCGAGTCACACTAACCCGTTACTCGAACACGGATTGGTCGGATCATCACGGTGCAAGTAGGACTAAAAAATAACAGTAGTCAATAATAT" \
+           "CAACTTAGGGTTGATACGTTACCCATGCATGTTAGACCTACTAAGCTTTCCTGGCAGCCCGTTCTGTACGAAAGTGACTGAGCTTGCCTGCCCGAACATGTCCAC" \
+           "GTTGAGCGAGTTTTTAACTCCGTCAGGTTGCCCGTATAGGTGGTATTGCTATCCGCAATAATGGGCGCCAGGTAATTAACGCATATAACCGACCCCCCGCGCTCCG"\
+           "GTTGTTATAAGCCTCGGCAATGTACTACATTCGGTATCGCTGGAACCTTTATGCCACCAAGAGTCCGACTTCCCCGTGTTGCGAGACGCACGCATGACACCGGGT" \
+           "ACTCGTTGGCAGGAATTTGCTGAGTTGTACTGTTTGTACGTTGTCCTCTTATAACTTTCAAGTTACAACTTTTCAAATGCTACGAGGGTTAAACTTATGGTGTAT" \
+           "CAGAATAAACAATCAGGCGCCCTCGAAACAAGTGAACTTTTATAATACGATAAAACGATTCATGAGCCATTTACTGGTTCGCCCCTCAATACCAGCGCCGCTAAA" \
+           "ATGTCTGATGACCCACGTGCTATTTTTCTAGCGCAGTCATAGTCACGGGACAAAGCTCCAACGTAGAGGACGGGCTAAGTCGCGTAAAACGCCAACCGAAGTCAA" \
+           "GGACCCCGTCATGTTAGCATCCGTATACGCGCATGCGCGAAGGGCTGTCATTTCC"
+
     start = time.time()
-    object1 = Sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
+    object1 = Sequence("test.fasta")
+
     trie = object1.build_trie(20)
     forward = find_primers(object1.frw_sequence, 60,)
     reverse = find_primers(object1.rvs_sequence, 60,  reverse=True)
@@ -56,11 +67,13 @@ if __name__ == "__main__":
     primer_pairs = []
     for frw_primer, frw_value in good_frw_primers.items():
         for rvs_primer, rvs_value in good_rvs_primers.items():
-            fragment = (rvs_value["start"] - frw_value["start"])
+            fragment = (rvs_value["start"] - frw_value["start"] + 1)
             if (300 <= fragment <= 2000):
                 pair_tuple = (frw_primer, rvs_primer, fragment)
                 primer_pairs.append(pair_tuple)
 
+    print(primer_pairs)
+    primer_pairs.sort(key=lambda a: a[-1])
     print(primer_pairs)
 
 
