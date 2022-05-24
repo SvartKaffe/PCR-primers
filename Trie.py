@@ -33,7 +33,7 @@ class Trie:
         """
         self.root = TrieNode("")
 
-    def insert(self, word):
+    def insert(self, word: str):
         """Insert a word into the trie"""
         node = self.root
 
@@ -55,7 +55,7 @@ class Trie:
         # Increment the counter to indicate that we see this word once more
         node.counter += 1
 
-    def hamming_distance(self, primer: str, delta_t: int):
+    def hamming_distance(self, primer: str, delta_t: int) -> list:
 
         result = []
         current_index = 0
@@ -72,6 +72,7 @@ class Trie:
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
                          current_cost: int, primer: str, nucleotide: str, delta_t: int, trie_sequence: str):
 
+        # stop condition, if true, stops recursive search for current primer
         if len(result) > 0:
             return
 

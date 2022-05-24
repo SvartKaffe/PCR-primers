@@ -1,27 +1,40 @@
-from Bio import SeqIO
-from Bio.Restriction import *
-from Bio.Seq import Seq
 from Sequence import Sequence
+from Primers import Primers
+from primer_algorithms import search, sort_primers
+import time
 
-for sequence1 in SeqIO.parse("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta", "fasta"):
-    sequence2 = sequence1.seq
-    sequence3 = sequence1.reverse_complement().seq
+# test run to see if shit works as intended
+# timer
+start = time.time()
 
+# read in genome
+object1 = Sequence("test.fasta")
 
-def EcoRI(sequence):
-    sekvens = sequence
-    enzymes = RestrictionBatch(["EcoRI"])
-    result = enzymes.search(sekvens)
-    locations = list(result.values())
-    sekvens = str(sequence)
-    location_single = [i-1 for sublist in locations for i in sublist]
-    fragments = [sekvens[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
+# build trie
+trie = object1.build_trie(20)
 
-    return fragments
+# generate primers
+primers = Primers(object1, 20)
+primers.GC_clamp()
+primers.GC_content(60, 40)
+primers.temp_selection(60)
 
-print("\n")
+# go through the trie
+forward_primers = search(trie, primers.get_frw_primers(), 20)
+reverse_primers = search(trie, primers.get_rvs_primers(), 20)
 
-ecori_test = Sequence("test.fasta")
-print(ecori_test.get_frw_sequence()[1])
+print(len(forward_primers))
+print(len(reverse_primers))
 
+primer_pairs, circular_pairs = sort_primers(forward_primers, reverse_primers, object1)
 
+print(len(primer_pairs))
+print(len(circular_pairs))
+print(circular_pairs)
+end = time.time()
+print(f"It took {end-start} seconds to finish the program, from start to finish")
+
+""" 
+a.sort(key=lambda y: y[-1], reverse=True)
+use this to sort the list in the end
+"""

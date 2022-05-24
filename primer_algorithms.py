@@ -1,6 +1,5 @@
 from Bio import SeqIO
 from Bio.Restriction import *
-from Bio.Seq import Seq
 import re
 import time
 
@@ -187,7 +186,7 @@ def trie_primers(sequence, length, reverse=False) -> dict:
     return primers
 
 
-def complement(nucleotide: str):
+def complement(nucleotide: str) -> str and int:
     if nucleotide == "A":
         return "T", 2
     if nucleotide == "T":
@@ -198,7 +197,7 @@ def complement(nucleotide: str):
         return "G", 4
 
 
-def temp_calc(string: str):
+def temp_calc(string: str) -> int:
     temp = 0
     for i in string:
         if i in ("A", "T"):
@@ -217,28 +216,48 @@ def search(trie, primers: dict, delta_t: int) -> dict:
     return good_primers
 
 
-def sort_primers(frw_primers: dict, rvs_primers: dict, sequence):
+def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> list:
     primer_pairs = []
+    circular_pairs = []
+    DNA = sequence.get_frw_sequence()
+    DNA_length = len(DNA)
+
     for frw_primer, frw_value in frw_primers.items():
         for rvs_primer, rvs_value in rvs_primers.items():
             start = frw_value["start"]
             stop = rvs_value["start"]
+
             fragment_length = (stop - start + 1)
-            fragments = EcoRI(sequence.get_frw_sequence()[start-1:stop])
+            circular_length = (DNA_length - start + stop + 1)
+            fragments = EcoRI(DNA[start-1:stop])
+            circular_DNA = DNA[start-1:]+DNA[:stop]
+            circular_fragments = EcoRI(circular_DNA)
 
             conditions = (len(fragments) >= 2
                           and len(fragments[0]) >= 300
                           and len(fragments[-1]) >= 300
+                          and fragment_length <= 3000
                           )
+
+            circular_conditions = (len(circular_fragments) >= 2
+                                   and circular_length <= 3000
+                                   and len(circular_fragments[0]) >= 300
+                                   and len(circular_fragments[-1]) >= 300
+                                   )
+
             # maybe store list of fragment sizes
             if conditions:
                 pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length)
                 primer_pairs.append(pair_tuple)
 
-    return primer_pairs
+            if circular_conditions:
+                circular_tuple = (frw_primer, rvs_primer, start, stop, circular_length)
+                circular_pairs.append(circular_tuple)
+
+    return primer_pairs, circular_pairs
 
 
-def EcoRI(sequence):
+def EcoRI(sequence) -> list[str]:
     sekvens = sequence
     enzymes = RestrictionBatch(["EcoRI"])
     result = enzymes.search(sekvens)
