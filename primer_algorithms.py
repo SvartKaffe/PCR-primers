@@ -216,7 +216,7 @@ def search(trie, primers: dict, delta_t: int) -> dict:
     return good_primers
 
 
-def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> list:
+def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists of tuples":
     primer_pairs = []
     circular_pairs = []
     DNA = sequence.get_frw_sequence()
@@ -234,37 +234,37 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> list:
             circular_fragments = EcoRI(circular_DNA)
 
             conditions = (len(fragments) >= 2
-                          and len(fragments[0]) >= 300
-                          and len(fragments[-1]) >= 300
+                          and fragments[0] >= 300
+                          and fragments[-1] >= 300
                           and fragment_length <= 3000
                           )
 
             circular_conditions = (len(circular_fragments) >= 2
                                    and circular_length <= 3000
-                                   and len(circular_fragments[0]) >= 300
-                                   and len(circular_fragments[-1]) >= 300
+                                   and circular_fragments[0] >= 300
+                                   and circular_fragments[-1] >= 300
                                    )
 
             # maybe store list of fragment sizes
             if conditions:
-                pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length)
+                pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length, fragments)
                 primer_pairs.append(pair_tuple)
 
             if circular_conditions:
-                circular_tuple = (frw_primer, rvs_primer, start, stop, circular_length)
+                circular_tuple = (frw_primer, rvs_primer, start, stop, circular_length, circular_fragments)
                 circular_pairs.append(circular_tuple)
 
     return primer_pairs, circular_pairs
 
 
-def EcoRI(sequence) -> list[str]:
+def EcoRI(sequence) -> list[int]:
     sekvens = sequence
     enzymes = RestrictionBatch(["EcoRI"])
     result = enzymes.search(sekvens)
     locations = list(result.values())
     sekvens = str(sequence)
     location_single = [i-1 for sublist in locations for i in sublist]
-    fragments = [sekvens[v1:v2] for v1, v2 in zip([0]+location_single, location_single+[None])]
+    fragments = [len(sekvens[v1:v2]) for v1, v2 in zip([0]+location_single, location_single+[None])]
 
     return fragments
 

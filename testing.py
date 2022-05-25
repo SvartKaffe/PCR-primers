@@ -8,7 +8,7 @@ import time
 start = time.time()
 
 # read in genome
-object1 = Sequence("test.fasta")
+object1 = Sequence("10k.fasta")
 
 # build trie
 trie = object1.build_trie(20)
@@ -30,7 +30,9 @@ primer_pairs, circular_pairs = sort_primers(forward_primers, reverse_primers, ob
 
 print(len(primer_pairs))
 print(len(circular_pairs))
+print(primer_pairs)
 print(circular_pairs)
+print("\n")
 end = time.time()
 print(f"It took {end-start} seconds to finish the program, from start to finish")
 
