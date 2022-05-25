@@ -101,7 +101,7 @@ class GUI:
             self.text_area.insert(tk.INSERT, "Running the remaining primers through the trie.\n")
 
             forward_primers = search(trie, primers.get_frw_primers(), delta_T)
-            reverse_primers = search(trie, primers.get_frw_primers(), delta_T)
+            reverse_primers = search(trie, primers.get_rvs_primers(), delta_T)
             print(len(forward_primers))
             print(len(reverse_primers))
 
@@ -126,8 +126,8 @@ class DisplayPrimers:
         self.parent = parent
         self.frame = ttk.Frame(self.parent)
         self.frame.pack()
-        self.primer_list = primer_list
-        self.circular_list = circular_list
+        self.normal_primer_list = primer_list
+        self.circular_primer_list = circular_list
         self.root = root
 
         self.title_label = ttk.Label(self.frame, text="Non-circular primer pairs:")
@@ -167,15 +167,14 @@ class DisplayPrimers:
         self.copy_primer_button.grid(row=4, column=1, padx=10, pady=5)
 
         # insert items into the list boxes
-        for item in self.primer_list:
+        for item in self.normal_primer_list:
             self.list_box.insert("end", item)
-        for item in self.circular_list:
+        for item in self.circular_primer_list:
             self.list_box2.insert("end", item)
 
     def copy_button(self):
         try:
             primer_info = self.list_box.get("anchor")
-            print(primer_info)
             primers = primer_info[:2]
             self.root.clipboard_clear()
             self.root.clipboard_append(primers)
