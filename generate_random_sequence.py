@@ -1,4 +1,5 @@
 from random import choice
+from Bio import SeqIO
 
 
 def random_dna(length):
@@ -9,4 +10,13 @@ def random_dna(length):
 
 
 if __name__ == "__main__":
-    print(random_dna(1000))
+    sequence = random_dna(30000)
+    fasta = ">123123123123123 \n" + sequence
+
+    write_file = open(r"30k.fasta", "w+")
+    write_file.write(fasta)
+    write_file.close()
+
+
+
+
