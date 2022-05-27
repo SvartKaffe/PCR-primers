@@ -166,6 +166,10 @@ class DisplayPrimers:
                                              style='my.TButton')
         self.copy_primer_button.grid(row=4, column=1, padx=10, pady=5)
 
+        # sort the lists
+        self.normal_primer_list.sort(key=lambda y: y[-4])
+        self.circular_primer_list.sort(key=lambda y: y[-4])
+
         # insert items into the list boxes
         for item in self.normal_primer_list:
             self.list_box.insert("end", item)

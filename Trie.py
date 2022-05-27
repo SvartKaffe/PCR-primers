@@ -32,6 +32,7 @@ class Trie:
         The root node does not store any character
         """
         self.root = TrieNode("")
+        self.num_nodes = 0
 
     def insert(self, word: str):
         """Insert a word into the trie"""
@@ -48,6 +49,7 @@ class Trie:
                 new_node = TrieNode(char)
                 node.children[char] = new_node
                 node = new_node
+                self.num_nodes += 1
 
         # Mark the end of a word
         node.is_end = True
