@@ -1,8 +1,12 @@
 from random import choice
-from Bio import SeqIO
 
 
-def random_dna(length):
+def random_dna(length: int) -> str:
+    """
+    This function generated a random DNA sequence
+    :param length: the length of the DNA sequence to be generated
+    :return: the DNA string generated
+    """
     dna = ""
     for count in range(length):
         dna += choice("CGTA")

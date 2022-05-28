@@ -5,18 +5,39 @@ import time
 
 
 class Sequence:
+    """
+    The Sequence class is used to read the given genome and to build the trie. It can also return the forward and
+    reverse complement of the given genome.
+    """
     def __init__(self, file):
+        """
+        When called it reads the sequence from the given fasta file.
+        :param file: file or the file location of the fasta file
+        """
         for sequence in SeqIO.parse(file, "fasta"):
             self.frw_sequence = sequence.seq
             self.rvs_sequence = sequence.reverse_complement().seq
 
-    def get_frw_sequence(self):
+    def get_frw_sequence(self) -> "biopython Seq object":
+        """
+        Returns the forward sequence.
+        :return: the forward sequence
+        """
         return self.frw_sequence
 
-    def get_rvs_sequence(self):
+    def get_rvs_sequence(self) -> "biopython Seq object":
+        """
+        Returns the reverse complement of the sequence
+        :return: the reverse complement
+        """
         return self.rvs_sequence
 
-    def build_trie(self, length):
+    def build_trie(self, length: int) -> "Trie object":
+        """
+        Calls the trie_primers() function to generate primers of size length and usees them to build the trie.
+        :param length: length of the primers
+        :return: A Trie object
+        """
         forward_primers = trie_primers(self.frw_sequence, length)
         reverse_primers = trie_primers(self.rvs_sequence, length)
         trie = Trie()

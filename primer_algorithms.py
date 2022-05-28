@@ -3,13 +3,20 @@ from Bio.Restriction import *
 import re
 import time
 
-
-# TODO: look at this https://www.youtube.com/watch?v=QkwPf3fcxBs and https://jszym.com/blog/dna_protein_complexity/
-# TODO: remove low complexity regions from sequence, lower amount of potential primers
+"""
+This file contains functions used in different files, some are not used in the main
+file since they are part of the brute-force solution.
+"""
 
 
 def find_primers(sequence: str, temp: int, reverse=False) -> dict:
-    # TODO: make DNA circular
+    """
+    Initially used for the brute-force solution, but can be used in main program.
+    :param sequence: DNA string
+    :param temp: Tm for the primers
+    :param reverse: used to get the correct start/stop positions when called for the reverse strand.
+    :return: a dictionary containing potential primers
+    """
     i = 0
     primers = {}
     duplicate_primers = []
@@ -89,10 +96,15 @@ def find_primers(sequence: str, temp: int, reverse=False) -> dict:
     return primers
 
 
-def unique_primers(primers, delta_t) -> dict:
-    # checks all primers against all other primers and sees if they are within delta_t of each other
+def unique_primers(primers: dict, delta_t: int) -> dict:
+    """
+    aligns all primers to all other primers in the dictionary and only keeps the primers outside the specified
+    delta_t value. This functions was really never used, was intended for the brute force solution.
+    :param primers: dictionary containing primers
+    :param delta_t: Ta
+    :return: dictionary with primers
+    """
     new_primers = {}
-
     for primer, values in primers.items():
         good_primer = True
         for primer2 in primers:
@@ -121,7 +133,17 @@ def unique_primers(primers, delta_t) -> dict:
     return new_primers
 
 
-def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp) -> dict:
+def primer_alignment(frw_sequence: str, rvs_sequence: str, primers: dict, delta_t: int, temp: int) -> dict:
+    """
+    This function is used for the brute force solution. It aligns all primers to the genome and discards the primer
+     if it binds within the specified Ta (delta_t) value.
+    :param frw_sequence: string of the forward sequence
+    :param rvs_sequence: string of the reverse sequence
+    :param primers: dictionary of primers
+    :param delta_t: user specified Ta value
+    :param temp: Tm for the primers in the dictionary
+    :return: dictionary of possible primer pairs.
+    """
     good_primers = {}
     melting_temp = temp - delta_t
     for primer, values in primers.items():
@@ -152,7 +174,14 @@ def primer_alignment(frw_sequence, rvs_sequence, primers, delta_t, temp) -> dict
     return good_primers
 
 
-def trie_primers(sequence, length, reverse=False) -> dict:
+def trie_primers(sequence, length: int, reverse=False) -> dict:
+    """
+    This function divides the genome into primers of size length.
+    :param sequence: Sequence object
+    :param length: length of the primers
+    :param reverse: used to generate the correct start/stop positions if the reverse complement is used.
+    :return: dictionary containing primers of size length
+    """
     i = 0
     primers = {}
     duplicate_primers = []
@@ -187,6 +216,11 @@ def trie_primers(sequence, length, reverse=False) -> dict:
 
 
 def complement(nucleotide: str) -> str and int:
+    """
+    Simple function used in various different parts of the program.
+    :param nucleotide: A DNA base (G, C, A, T)
+    :return: The complement to the nucleotide as well as the Marmor Doty cost.
+    """
     if nucleotide == "A":
         return "T", 2
     if nucleotide == "T":
@@ -198,6 +232,11 @@ def complement(nucleotide: str) -> str and int:
 
 
 def temp_calc(string: str) -> int:
+    """
+    Simple function used to calculate the Tm value for a DNA sequence.
+    :param string: DNA string
+    :return: the calculated Tm value.
+    """
     temp = 0
     for i in string:
         if i in ("A", "T"):
@@ -208,6 +247,13 @@ def temp_calc(string: str) -> int:
 
 
 def search(trie, primers: dict, delta_t: int) -> dict:
+    """
+    This function calls the recursive search function hamming_distance.
+    :param trie: Trie object
+    :param primers: dictionary of primers
+    :param delta_t: user specified Ta value
+    :return: a dictionary containing primers outside the specified Ta (delta_t) value
+    """
     good_primers = {}
     for primer, values in primers.items():
         result = trie.hamming_distance(primer, delta_t)
@@ -217,6 +263,15 @@ def search(trie, primers: dict, delta_t: int) -> dict:
 
 
 def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists of tuples":
+    """
+    This is the function that pairs forward with reverse primers, it really slows down the program if it is given many
+    primers due to its O(n^2) complexity.
+    :param frw_primers: dictionary of forward primers
+    :param rvs_primers: dictionary of reverse primers
+    :param sequence: Sequence object
+    :return: Two lists of tuples, one containing "normal" primer pairs as well as other useful information. The other
+    contains primer pairs that go over the beginning/end aka "circular primers" along with other useful information.
+    """
     primer_pairs = []
     circular_pairs = []
     DNA = sequence.get_frw_sequence()
@@ -258,6 +313,11 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists o
 
 
 def EcoRI(sequence) -> list[int]:
+    """
+    This function generates the digestion map for a DNA sequence, used in the main program.
+    :param sequence: Sequence object
+    :return: a list with the fragments from the EcoRI digestion.
+    """
     sekvens = sequence
     enzymes = RestrictionBatch(["EcoRI"])
     result = enzymes.search(sekvens)

@@ -7,8 +7,14 @@ import tkinter.scrolledtext as st
 
 
 class GUI:
-
+    """
+    The main GUI app.
+    """
     def __init__(self, root):
+        """
+        Constructor of the main GUI app class that builds the initial GUI interface.
+        :param root: where to stick the window
+        """
         self.frame = tk.Frame()
         self.frame.grid()
         self.root = root
@@ -59,6 +65,10 @@ class GUI:
         self.display_primers_button.grid(row=9, column=4, padx=20, pady=5, ipadx=10, ipady=5)
 
     def file_dialog(self):
+        """
+        The function that calls the filedialog for load in a fasta file.
+        :return: nothing
+        """
         self.filepath = filedialog.askopenfilename(filetypes=(('Fasta files', '*.fasta'),))
         self.file_name["text"] = self.filepath
 
@@ -70,6 +80,10 @@ class GUI:
                 tk.messagebox.showerror("Error")
 
     def check_input(self):
+        """
+        Checks that you put stuff in the correct places, gives acess to the run program button
+        :return: nothing
+        """
         delta_T = self.enter_deltaT.get()
         temp = self.enter_temp.get()
 
@@ -81,39 +95,43 @@ class GUI:
                                                      " fasta file")
 
     def run_program(self):
-            delta_T = int(self.enter_deltaT.get())
-            temp = int(self.enter_temp.get())
-            self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
-            self.text_area.insert(tk.INSERT, "Building trie.\n")
+        """
+        This method runs the program, called by the run program button.
+        :return: nothing
+        """
+        delta_T = int(self.enter_deltaT.get())
+        temp = int(self.enter_temp.get())
+        self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
+        self.text_area.insert(tk.INSERT, "Building trie.\n")
 
-            trie = self.genome.build_trie(20)
-            self.text_area.insert(tk.INSERT, "Building of trie is done.\n")
-            self.text_area.insert(tk.INSERT, "Generating potential primers.\n")
+        trie = self.genome.build_trie(20)
+        self.text_area.insert(tk.INSERT, "Building of trie is done.\n")
+        self.text_area.insert(tk.INSERT, "Generating potential primers.\n")
 
-            primers = Primers(self.genome, 20)
-            self.text_area.insert(tk.INSERT, "Potential primers generated, removal of bad primers beginning.\n")
+        primers = Primers(self.genome, 20)
+        self.text_area.insert(tk.INSERT, "Potential primers generated, removal of bad primers beginning.\n")
 
-            primers.GC_clamp()
-            primers.GC_content(60, 40)
-            primers.temp_selection(temp)
+        primers.GC_clamp()
+        primers.GC_content(60, 40)
+        primers.temp_selection(temp)
 
-            self.text_area.insert(tk.INSERT, "Only acceptable primers remain.\n")
-            self.text_area.insert(tk.INSERT, "Running the remaining primers through the trie.\n")
+        self.text_area.insert(tk.INSERT, "Only acceptable primers remain.\n")
+        self.text_area.insert(tk.INSERT, "Running the remaining primers through the trie.\n")
 
-            forward_primers = search(trie, primers.get_frw_primers(), delta_T)
-            reverse_primers = search(trie, primers.get_rvs_primers(), delta_T)
-            print(len(forward_primers))
-            print(len(reverse_primers))
+        forward_primers = search(trie, primers.get_frw_primers(), delta_T)
+        reverse_primers = search(trie, primers.get_rvs_primers(), delta_T)
 
-            self.text_area.insert(tk.INSERT, "Done.\n")
-            self.text_area.insert(tk.INSERT, "Generating primer pairs.\n")
+        self.text_area.insert(tk.INSERT, "Done.\n")
+        self.text_area.insert(tk.INSERT, "Generating primer pairs.\n")
 
-            self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
-            print(len(self.primer_list))
-            print(len(self.circular_list))
-            self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")
+        self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
+        self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")
 
     def call_display_primers(self):
+        """
+        This method is used to call the DisplayPrimers class
+        :return: nothing
+        """
         self.window = tk.Toplevel()
         self.frame_list = tk.Frame(self.window)
         self.frame_list.grid(row=0, column=0)
@@ -122,7 +140,17 @@ class GUI:
 
 
 class DisplayPrimers:
+    """
+    This class is used to display the primer pairs at the end of the program
+    """
     def __init__(self, parent, primer_list, circular_list, root):
+        """
+
+        :param parent: Where to stick window
+        :param primer_list: list containing "normal" primer pairs
+        :param circular_list: list containing "circular" primer pairs
+        :param root: the root window, needed for the copy to clipboard function.
+        """
         self.parent = parent
         self.frame = ttk.Frame(self.parent)
         self.frame.pack()
@@ -177,6 +205,10 @@ class DisplayPrimers:
             self.list_box2.insert("end", item)
 
     def copy_button(self):
+        """
+        Used to copy the selected item in the listbox
+        :return: nothing
+        """
         try:
             primer_info = self.list_box.get("anchor")
             primers = primer_info[:2]
@@ -187,6 +219,10 @@ class DisplayPrimers:
 
 
 def run_gui():
+    """
+    function used to run the GUI.
+    :return: nothing
+    """
 
     root = tk.Tk()
     root.geometry("700x700")
