@@ -34,9 +34,9 @@ class Sequence:
 
     def build_trie(self, length: int) -> "Trie object":
         """
-        Calls the trie_primers() function to generate primers of size length and usees them to build the trie.
+        Calls the trie_primers() function to generate primers of size length and uses them to build the trie.
         :param length: length of the primers
-        :return: A Trie object
+        :return: A Trie object used for the search functions.
         """
         forward_primers = trie_primers(self.frw_sequence, length)
         reverse_primers = trie_primers(self.rvs_sequence, length)
