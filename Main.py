@@ -30,7 +30,7 @@ class GUI:
         self.open_file_dialog_button.grid(row=1, column=0, padx=10, pady=5, ipadx=10, ipady=5)
 
         self.file_name = ttk.Label(self.frame, text="", style="text.TLabel")
-        self.file_name.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
+        self.file_name.grid(row=1, column=1, padx=10, pady=10, columnspan=10, sticky=tk.W)
 
         self.temp_label = ttk.Label(self.frame, text="Enter annealing temperature:")
         self.temp_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
@@ -61,7 +61,7 @@ class GUI:
         self.text_area.grid(row=9, column=0, padx=10, pady=5, columnspan=3, sticky=tk.W)
 
         self.display_primers_button = ttk.Button(self.frame, text="View primers", command=self.call_display_primers,
-                                                 style="my.TButton")
+                                                 style="my.TButton", state=tk.DISABLED)
         self.display_primers_button.grid(row=9, column=4, padx=20, pady=5, ipadx=10, ipady=5)
 
     def file_dialog(self):
@@ -81,7 +81,7 @@ class GUI:
 
     def check_input(self):
         """
-        Checks that you put stuff in the correct places, gives acess to the run program button
+        Checks that you put stuff in the correct places, gives access to the run program button
         :return: nothing
         """
         delta_T = self.enter_deltaT.get()
@@ -126,6 +126,7 @@ class GUI:
 
         self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
         self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")
+        self.display_primers_button.config(state=tk.NORMAL)
 
     def call_display_primers(self):
         """
@@ -225,7 +226,7 @@ def run_gui():
     """
 
     root = tk.Tk()
-    root.geometry("700x700")
+    root.geometry("700x750")
     root.title("PCR-primers GUI")
 
     GUI(root)

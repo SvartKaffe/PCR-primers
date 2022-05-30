@@ -94,24 +94,25 @@ class Trie:
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
                          current_cost: int, primer: str, nucleotide: str, delta_t: int, trie_sequence: str):
         """
-        The recursive part of the search function.
+        The recursive part of the search function. Iterates through all the nodes in the trie unless aborted early.
 
         :param node: current node in the trie
         :param result: a list, used to stop the search
         :param current_index: current index in the primer
-        :param current_cost: the current delta_t value for the primer
-        :param primer: the primer that is being aligned/check the delta_t value against the trie
+        :param current_cost: the current delta_t (Ta) value for the primer
+        :param primer: the primer used for the delta_t calculation
         :param nucleotide: Nucleotide of the current/next node
         :param delta_t: the Ta value (delta_t)
         :param trie_sequence: the path taken in the trie (will be a DNA sequence), used to see if the taken path is equal
         to the primer.
-        :return:
+        :return: nothing
         """
 
         # stop condition, if true, stops recursive search for current primer
         if len(result) > 0:
             return
 
+        # base at current_index in primer is being compared to the base in the node.
         if nucleotide == primer[current_index]:
             if primer[current_index] in ("G", "C"):
                 current_cost += 4
