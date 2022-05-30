@@ -11,7 +11,8 @@ class TrieNode:
 
     def __init__(self, char: str):
         """
-
+        Constructor for the TrieNode class, stores information about the node, such as which base it is, if it is an end
+        node and its child nodes.
         :param char: A DNA base
         """
         # the character stored in this node
