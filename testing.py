@@ -12,7 +12,7 @@ This file is used for testing purposes.
 # timer
 start_read_build = time.time()
 # read in genome
-object1 = Sequence("Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
+object1 = Sequence("fasta_files\\Enterobacteria-phage-P2-NC_001895-complete-genome.fasta")
 # build trie
 trie = object1.build_trie(20)
 end_read_build = time.time()
@@ -27,16 +27,19 @@ end_filter = time.time()
 
 start_search = time.time()
 # go through the trie
-forward_primers = search(trie, primers.get_frw_primers(), 20)
-reverse_primers = search(trie, primers.get_rvs_primers(), 20)
+forward_primers = search(trie, primers.get_frw_primers(), 18)
+reverse_primers = search(trie, primers.get_rvs_primers(), 18)
 end_search = time.time()
+
+print("\n")
+print(len(forward_primers))
+print(len(reverse_primers))
+print("\n")
 
 start_pair = time.time()
 primer_pairs, circular_pairs = sort_primers(forward_primers, reverse_primers, object1)
 end_pair = time.time()
 print(len(primer_pairs), len(circular_pairs))
-print(primer_pairs)
-print(circular_pairs)
 
 end = time.time()
 

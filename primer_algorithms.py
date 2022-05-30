@@ -218,9 +218,10 @@ def trie_primers(sequence, length: int, reverse=False) -> dict:
 
 def complement(nucleotide: str) -> str and int:
     """
-    Simple function used in various different parts of the program.
+    Simple function used in various different parts of the program. Returns the complement and the annealing temp
+    cost.
     :param nucleotide: A DNA base (G, C, A, T)
-    :return: The complement to the nucleotide as well as the Marmor Doty cost.
+    :return: The complement to the nucleotide as well as the Marmor Doty annealing cost.
     """
     if nucleotide == "A":
         return "T", 2
