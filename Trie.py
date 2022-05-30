@@ -5,17 +5,22 @@ from primer_algorithms import complement
 
 
 class TrieNode:
-    """A node in the trie structure"""
+    """
+    This class is used for the nodes in the Trie class.
+    """
 
-    def __init__(self, char):
+    def __init__(self, char: str):
+        """
+
+        :param char: A DNA base
+        """
         # the character stored in this node
         self.char = char
 
         # whether this can be the end of a word
         self.is_end = False
 
-        # a counter indicating how many times a word is inserted
-        # (if this node's is_end is True)
+        # remnant from source, not used
         self.counter = 0
 
         # a dictionary of child nodes
@@ -24,18 +29,25 @@ class TrieNode:
 
 
 class Trie:
-    """The trie object"""
+    """
+    The trie datatype.
+    """
 
     def __init__(self):
         """
-        The trie has at least the root node.
-        The root node does not store any character
+        The trie class constructor, builds the first root node, which is an empty string, the number
+        of nodes are also stored here.
         """
         self.root = TrieNode("")
         self.num_nodes = 0
 
     def insert(self, word: str):
-        """Insert a word into the trie"""
+        """
+        Insert method, inserts a string into the trie. It first looks if the letter exists, if not,
+        it creates a new node and assigns the letter to it.
+        :param word: string
+        :return: nothing
+        """
         node = self.root
 
         # Loop through each character in the word
@@ -58,6 +70,13 @@ class Trie:
         node.counter += 1
 
     def hamming_distance(self, primer: str, delta_t: int) -> list:
+        """
+        Initial function that calls the recursive search function. Still called hamming_distance despite not calculating
+        the hamming distance, the name from the source repo stuck.
+        :param primer: DNA primer that will be used to traverse the trie
+        :param delta_t: Ta (delta_t) value.
+        :return: a list, either empty or with one item in it.
+        """
 
         result = []
         current_index = 0
@@ -73,6 +92,20 @@ class Trie:
 
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
                          current_cost: int, primer: str, nucleotide: str, delta_t: int, trie_sequence: str):
+        """
+        The recursive part of the search function.
+
+        :param node: current node in the trie
+        :param result: a list, used to stop the search
+        :param current_index: current index in the primer
+        :param current_cost: the current delta_t value for the primer
+        :param primer: the primer that is being aligned/check the delta_t value against the trie
+        :param nucleotide: Nucleotide of the current/next node
+        :param delta_t: the Ta value (delta_t)
+        :param trie_sequence: the path taken in the trie (will be a DNA sequence), used to see if the taken path is equal
+        to the primer.
+        :return:
+        """
 
         # stop condition, if true, stops recursive search for current primer
         if len(result) > 0:
@@ -94,18 +127,23 @@ class Trie:
             if primer[current_index] == "C" and not nucleotide == base:
                 current_cost += 4
 
+        # checks if the current primer has a bigger delta_t value than user specified one,
+        # if true, it ends the search of the current branch
         if current_cost > delta_t:
             return
 
         current_index += 1
 
-        # stopping criteria
+        # if at the end of a branch, and the path in the trie is not equal to the primer,
+        # it means that the current primer has a location in the genome which is within the specified
+        # delta_t value (Ta), it is added to the result list and search is aborted for the primer
         if node.is_end:
             if trie_sequence != primer:
                 result.append(trie_sequence)
             else:
                 return
 
+        # continuation of the recursive search
         for nucleotide in node.children:
             self.recursive_search(node.children[nucleotide], result, current_index, current_cost, primer, nucleotide,
                                   delta_t, trie_sequence + nucleotide)
