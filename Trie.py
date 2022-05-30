@@ -1,4 +1,4 @@
-from primer_algorithms import complement
+from primer_algorithms import complement, temp_calc
 # Trie taken from https://albertauyeung.github.io/2020/06/15/python-trie.html/
 # The recursive function is heavily inspired by https://github.com/volpato30/hamming-d-search/blob/master/trie.py
 # and https://albertauyeung.github.io/2020/06/15/python-trie.html/
@@ -136,7 +136,7 @@ class Trie:
 
         current_index += 1
 
-        # if at the end of a branch, and the path in the trie is not equal to the primer,
+        # if at the end of a branch, current_cost = 0, a per
         # it means that the current primer has a location in the genome which is within the specified
         # delta_t value (Ta), it is added to the result list and search is aborted for the primer
         if node.is_end:
@@ -160,3 +160,10 @@ if __name__ == "__main__":
 
     debug = t.hamming_distance("GTACT", 10)
     print(debug)
+"""
+        if node.is_end:
+            if current_cost == 0:
+                return
+            else:
+                result.append(1)
+"""

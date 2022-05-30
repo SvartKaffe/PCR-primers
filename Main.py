@@ -193,7 +193,11 @@ class DisplayPrimers:
 
         self.copy_primer_button = ttk.Button(self.frame, text="Select", command=self.copy_button,
                                              style='my.TButton')
-        self.copy_primer_button.grid(row=4, column=1, padx=10, pady=5)
+        self.copy_primer_button.grid(row=3, column=2, padx=10, pady=5)
+
+        self.copy_primer_button2 = ttk.Button(self.frame, text="Select", command=self.copy_button2,
+                                              style='my.TButton')
+        self.copy_primer_button2.grid(row=5, column=2, padx=10, pady=5)
 
         # sort the lists
         self.normal_primer_list.sort(key=lambda y: y[-4])
@@ -212,6 +216,19 @@ class DisplayPrimers:
         """
         try:
             primer_info = self.list_box.get("anchor")
+            primers = primer_info[:2]
+            self.root.clipboard_clear()
+            self.root.clipboard_append(primers)
+        except:
+            tk.messagebox.showerror("Error")
+
+    def copy_button2(self):
+        """
+        Used to copy the selected item in the listbox
+        :return: nothing
+        """
+        try:
+            primer_info = self.list_box2.get("anchor")
             primers = primer_info[:2]
             self.root.clipboard_clear()
             self.root.clipboard_append(primers)

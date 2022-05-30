@@ -12,7 +12,7 @@ This file is used for testing purposes.
 # timer
 start_read_build = time.time()
 # read in genome
-object1 = Sequence("fasta_files\\10k.fasta")
+object1 = Sequence("fasta_files\\20k.fasta")
 # build trie
 trie = object1.build_trie(20)
 end_read_build = time.time()
