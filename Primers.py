@@ -6,7 +6,7 @@ from Sequence import Sequence
 
 class Primers:
     """
-    The Primer class is used to store primers and to apply filters to them.
+    The Primers class is used to store primers and to apply filters to them.
     """
     def __init__(self, sequence, length: int):
         """
