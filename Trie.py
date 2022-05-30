@@ -87,12 +87,12 @@ class Trie:
 
         for nucleotide in root_node.children:
             self.recursive_search(root_node.children[nucleotide], result, current_index, current_cost, primer,
-                                  nucleotide, delta_t)
+                                  nucleotide, delta_t, nucleotide)
 
         return result
 
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
-                         current_cost: int, primer: str, nucleotide: str, delta_t: int):
+                         current_cost: int, primer: str, nucleotide: str, delta_t: int, sequence: str):
         """
         The recursive part of the search function. Iterates through all the nodes in the trie unless aborted early.
 
@@ -103,11 +103,12 @@ class Trie:
         :param primer: the primer which is being aligned to the genome
         :param nucleotide: Nucleotide of the current/next node
         :param delta_t: the Ta value (delta_t)
+        :param sequence: the current path taken in the trie
         :return: nothing
         """
 
         # if the list has 2 elements it means that the primer has 2 positions within specified Ta
-        if len(result) > 1:
+        if len(result) > 0:
             return
 
         # base at current_index in primer is being compared to the base in the node.
@@ -134,19 +135,18 @@ class Trie:
 
         current_index += 1
 
-        # if at the end of a branch add 1 to the list, it means that the current primer
+        # if at the end of a branch and current path != the primer, add 1 to the list, it means that the current primer
         # has a location in the genome which is within the specified delta_t value (Ta)
         if node.is_end:
-            result.append(1)
-
-        # if the list has 2 elements it means that the primer has 2 positions within specified Ta
-        if len(result) > 1:
-            return
+            if sequence == primer:
+                return
+            else:
+                result.append(1)
 
         # continuation of the recursive search
         for nucleotide in node.children:
             self.recursive_search(node.children[nucleotide], result, current_index, current_cost, primer, nucleotide,
-                                  delta_t)
+                                  delta_t, sequence+nucleotide)
 
 
 if __name__ == "__main__":
