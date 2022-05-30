@@ -103,12 +103,10 @@ class Trie:
         :param primer: the primer which is being aligned to the genome
         :param nucleotide: Nucleotide of the current/next node
         :param delta_t: the Ta value (delta_t)
-        :param trie_sequence: the path taken in the trie (will be a DNA sequence), used to see if the taken path is equal
-        to the primer.
         :return: nothing
         """
 
-        # stop condition, if true, stops recursive search for current primer
+        # if the list has 2 elements it means that the primer has 2 positions within specified Ta
         if len(result) > 1:
             return
 
@@ -136,12 +134,12 @@ class Trie:
 
         current_index += 1
 
-        # if at the end of a branch, and the path in the trie is not equal to the primer,
-        # it means that the current primer has a location in the genome which is within the specified
-        # delta_t value (Ta), it is added to the result list and search is aborted for the primer
+        # if at the end of a branch add 1 to the list, it means that the current primer
+        # has a location in the genome which is within the specified delta_t value (Ta)
         if node.is_end:
             result.append(1)
 
+        # if the list has 2 elements it means that the primer has 2 positions within specified Ta
         if len(result) > 1:
             return
 
