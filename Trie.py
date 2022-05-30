@@ -100,7 +100,7 @@ class Trie:
         :param result: a list, used to stop the search
         :param current_index: current index in the primer
         :param current_cost: the current delta_t (Ta) value for the primer
-        :param primer: the primer used for the delta_t calculation
+        :param primer: the primer which is being aligned to the genome
         :param nucleotide: Nucleotide of the current/next node
         :param delta_t: the Ta value (delta_t)
         :param trie_sequence: the path taken in the trie (will be a DNA sequence), used to see if the taken path is equal
