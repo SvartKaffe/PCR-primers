@@ -259,7 +259,7 @@ def search(trie, primers: dict, delta_t: int) -> dict:
     good_primers = {}
     for primer, values in primers.items():
         result = trie.hamming_distance(primer, delta_t)
-        if len(result) == 0:
+        if len(result) <= 1:
             good_primers[primer] = values
     return good_primers
 

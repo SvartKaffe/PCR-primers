@@ -108,7 +108,7 @@ class Trie:
         :return: nothing
         """
 
-        # stop condition, if true, stops recursive search for current primer
+        # needed to successfully terminate search
         if len(result) > 1:
             return
 
@@ -141,9 +141,8 @@ class Trie:
         # delta_t value (Ta), it is added to the result list and search is aborted for the primer
         if node.is_end:
             result.append(1)
-
-        if len(result) > 1:
-            return
+            if len(result) > 1:
+                return
 
         # continuation of the recursive search
         for nucleotide in node.children:
@@ -157,6 +156,7 @@ if __name__ == "__main__":
     t.insert("GATCG")
     t.insert("ATGCC")
     t.insert("AGCGT")
+    t.insert("TCTGA")
 
-    debug = t.hamming_distance("GGGGG", 10)
+    debug = t.hamming_distance("GTACT", 10)
     print(debug)
