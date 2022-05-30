@@ -87,12 +87,12 @@ class Trie:
 
         for nucleotide in root_node.children:
             self.recursive_search(root_node.children[nucleotide], result, current_index, current_cost, primer,
-                                  nucleotide, delta_t, nucleotide)
+                                  nucleotide, delta_t)
 
         return result
 
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
-                         current_cost: int, primer: str, nucleotide: str, delta_t: int, trie_sequence: str):
+                         current_cost: int, primer: str, nucleotide: str, delta_t: int):
         """
         The recursive part of the search function. Iterates through all the nodes in the trie unless aborted early.
 
@@ -148,7 +148,7 @@ class Trie:
         # continuation of the recursive search
         for nucleotide in node.children:
             self.recursive_search(node.children[nucleotide], result, current_index, current_cost, primer, nucleotide,
-                                  delta_t, trie_sequence + nucleotide)
+                                  delta_t)
 
 
 if __name__ == "__main__":
