@@ -11,7 +11,8 @@ file since they are part of the brute-force solution.
 
 def find_primers(sequence: str, temp: int, reverse=False) -> dict:
     """
-    Initially used for the brute-force solution, but can be used in main program.
+    Initially used for the brute-force solution, but can be used in main program. Genereates primers based on temperature,
+    not length.
     :param sequence: DNA string
     :param temp: Tm for the primers
     :param reverse: used to get the correct start/stop positions when called for the reverse strand.
@@ -265,7 +266,7 @@ def search(trie, primers: dict, delta_t: int) -> dict:
 def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists of tuples":
     """
     This is the function that pairs forward with reverse primers, it really slows down the program if it is given many
-    primers due to its O(n^2) complexity.
+    primers due to its O(n^2) complexity and other computations.
     :param frw_primers: dictionary of forward primers
     :param rvs_primers: dictionary of reverse primers
     :param sequence: Sequence object
