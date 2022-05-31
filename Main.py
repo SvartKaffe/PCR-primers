@@ -1,10 +1,10 @@
 from Sequence import Sequence
 from Primers import Primers
-from primer_algorithms import search, sort_primers
+from primer_algorithms import search, forward, circular, EcoRI_digest
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar
 import tkinter.scrolledtext as st
-
+from operator import itemgetter
 
 class GUI:
     """
@@ -90,6 +90,7 @@ class GUI:
         if self.filepath and delta_T and temp:
             self.run.config(state="normal")
             tk.messagebox.showinfo("Good values", "You can now press the run program button.")
+            self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
         else:
             tk.messagebox.showinfo("Missing values", "one or more values seems to be missing\nor you did not load in a"
                                                      " fasta file")
@@ -101,7 +102,6 @@ class GUI:
         """
         delta_T = int(self.enter_deltaT.get())
         temp = int(self.enter_temp.get())
-        self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
         self.text_area.insert(tk.INSERT, "Building trie.\n")
 
         trie = self.genome.build_trie(20)
@@ -124,7 +124,11 @@ class GUI:
         self.text_area.insert(tk.INSERT, "Done.\n")
         self.text_area.insert(tk.INSERT, "Generating primer pairs.\n")
 
-        self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
+        # self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
+        primer_pairs = forward(forward_primers, reverse_primers)
+        circular_pairs = circular(forward_primers, reverse_primers, self.genome)
+        self.primer_list = EcoRI_digest(primer_pairs, self.genome)
+        self.circular_list = EcoRI_digest(circular_pairs, self.genome, circular=True)
         self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")
         self.display_primers_button.config(state=tk.NORMAL)
 
@@ -155,8 +159,8 @@ class DisplayPrimers:
         self.parent = parent
         self.frame = ttk.Frame(self.parent)
         self.frame.pack()
-        self.normal_primer_list = primer_list
-        self.circular_primer_list = circular_list
+        self.normal_primer_list = sorted(primer_list, key=itemgetter(4))
+        self.circular_primer_list = sorted(circular_list, key=itemgetter(4))
         self.root = root
 
         self.title_label = ttk.Label(self.frame, text="Non-circular primer pairs:")
@@ -199,15 +203,11 @@ class DisplayPrimers:
                                               style='my.TButton')
         self.copy_primer_button2.grid(row=5, column=2, padx=10, pady=5)
 
-        # sort the lists
-        self.normal_primer_list.sort(key=lambda y: y[-4])
-        self.circular_primer_list.sort(key=lambda y: y[-4])
-
         # insert items into the list boxes
         for item in self.normal_primer_list:
-            self.list_box.insert("end", item)
+            self.list_box.insert(0, item)
         for item in self.circular_primer_list:
-            self.list_box2.insert("end", item)
+            self.list_box2.insert(0, item)
 
     def copy_button(self):
         """

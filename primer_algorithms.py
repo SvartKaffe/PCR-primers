@@ -3,6 +3,7 @@ from Bio.Restriction import *
 import re
 import time
 
+
 """
 This file contains functions used in different files, some are not used in the main
 file since they are part of the brute-force solution.
@@ -259,7 +260,7 @@ def search(trie, primers: dict, delta_t: int) -> dict:
     good_primers = {}
     for primer, values in primers.items():
         result = trie.hamming_distance(primer, delta_t)
-        if len(result) <= 1:
+        if len(result) == 0:
             good_primers[primer] = values
     return good_primers
 
@@ -302,7 +303,6 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists o
                                    and circular_fragments[-1] >= 300
                                    )
 
-            # maybe store list of fragment sizes
             if conditions:
                 pair_tuple = (frw_primer, rvs_primer, start, stop, fragment_length, fragments)
                 primer_pairs.append(pair_tuple)
@@ -312,6 +312,59 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists o
                 circular_pairs.append(circular_tuple)
 
     return primer_pairs, circular_pairs
+
+
+def forward(frw_primers: dict, rvs_primers: dict):
+    primer_pairs = []
+
+    for frw_primer, frw_value in frw_primers.items():
+        for rvs_primer, rvs_value in rvs_primers.items():
+            start = frw_value["start"]
+            stop = rvs_value["start"]
+            fragment_length = (stop - start + 1)
+
+            if 300 <= fragment_length <= 3000:
+                primer_pairs.append([frw_primer, rvs_primer, start, stop, fragment_length])
+
+    return primer_pairs
+
+
+def circular(frw_primers: dict, rvs_primers: dict, sequence):
+    primer_pairs = []
+    dna_length = sequence.sequence_length
+
+    for frw_primer, frw_value in frw_primers.items():
+        for rvs_primer, rvs_value in rvs_primers.items():
+            start = frw_value["start"]
+            stop = rvs_value["start"]
+            circular_length = (dna_length - start + stop + 1)
+
+            if 300 <= circular_length <= 3000:
+                primer_pairs.append([frw_primer, rvs_primer, start, stop, circular_length])
+
+    return primer_pairs
+
+
+def EcoRI_digest(primer_pairs: list, sequence, circular=False):
+    dna = sequence.get_frw_sequence()
+    dna_length = sequence.sequence_length
+    length = len(primer_pairs)
+
+    if circular:
+        for i in range(length):
+            start = primer_pairs[i][2]
+            stop = primer_pairs[i][3]
+            dna_fragment = dna[start-1:] + dna[:stop]
+            fragments = EcoRI(dna_fragment)
+            primer_pairs[i].append(fragments)
+    else:
+        for i in range(length):
+            start = primer_pairs[i][2]
+            stop = primer_pairs[i][3]
+            fragments = EcoRI(dna[start-1:stop])
+            primer_pairs[i].append(fragments)
+
+    return primer_pairs
 
 
 def EcoRI(sequence) -> list[int]:

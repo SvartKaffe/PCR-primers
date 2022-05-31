@@ -109,7 +109,7 @@ class Trie:
         """
 
         # needed to successfully terminate search
-        if len(result) > 1:
+        if len(result) > 0:
             return
 
         # base at current_index in primer is being compared to the base in the node.
@@ -140,9 +140,11 @@ class Trie:
         # it means that the current primer has a location in the genome which is within the specified
         # delta_t value (Ta), it is added to the result list and search is aborted for the primer
         if node.is_end:
-            result.append(1)
-            if len(result) > 1:
+            if current_cost == 0:
                 return
+            else:
+                result.append(1)
+
 
         # continuation of the recursive search
         for nucleotide in node.children:
