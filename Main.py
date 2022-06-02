@@ -34,13 +34,23 @@ class GUI:
 
         self.temp_label = ttk.Label(self.frame, text="Enter annealing temperature:")
         self.temp_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
-        self.enter_temp = ttk.Entry(self.frame, width=35)
-        self.enter_temp.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
+        self.enter_temp = ttk.Entry(self.frame, width=10)
+        self.enter_temp.grid(row=2, column=1, padx=5, pady=10, sticky=tk.W)
 
         self.deltaT_label = ttk.Label(self.frame, text="Enter deltaT: \n(lower values = longer runtime):")
         self.deltaT_label.grid(row=3, column=0, padx=10, pady=10, sticky=tk.W)
-        self.enter_deltaT = ttk.Entry(self.frame, width=35)
-        self.enter_deltaT.grid(row=3, column=1, padx=10, pady=10, sticky=tk.W)
+        self.enter_deltaT = ttk.Entry(self.frame, width=10)
+        self.enter_deltaT.grid(row=3, column=1, padx=5, pady=10, sticky=tk.W)
+
+        self.fragment_label = ttk.Label(self.frame, text="Enter max fragment size:")
+        self.fragment_label.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
+        self.enter_fragment_max = ttk.Entry(self.frame, width=10)
+        self.enter_fragment_max.grid(row=2, column=3, padx=5, pady=10, sticky=tk.W)
+
+        self.fragment_label = ttk.Label(self.frame, text="Enter min fragment size:")
+        self.fragment_label.grid(row=3, column=2, padx=10, pady=10, sticky=tk.W)
+        self.enter_fragment_min = ttk.Entry(self.frame, width=10)
+        self.enter_fragment_min.grid(row=3, column=3, padx=5, pady=10, sticky=tk.W)
 
         self.filler1 = ttk.Label(self.frame, text="", style="text.TLabel")
         self.filler1.grid(row=4, column=0, padx=10, pady=10, sticky=tk.W)
@@ -58,11 +68,11 @@ class GUI:
         self.window_label = ttk.Label(self.frame, text="Messages will be displayed here:")
         self.window_label.grid(row=8, column=0, padx=10, pady=5, sticky=tk.W)
         self.text_area = st.ScrolledText(self.frame, width=65, height=20)
-        self.text_area.grid(row=9, column=0, padx=10, pady=5, columnspan=3, sticky=tk.W)
+        self.text_area.grid(row=9, column=0, padx=10, columnspan=3, pady=5, sticky=tk.W)
 
         self.display_primers_button = ttk.Button(self.frame, text="View primers", command=self.call_display_primers,
                                                  style="my.TButton", state=tk.DISABLED)
-        self.display_primers_button.grid(row=9, column=4, padx=20, pady=5, ipadx=10, ipady=5)
+        self.display_primers_button.grid(row=9, column=3, padx=20, pady=5, ipadx=10, ipady=5, sticky=tk.W)
 
     def file_dialog(self):
         """
@@ -86,8 +96,10 @@ class GUI:
         """
         delta_T = self.enter_deltaT.get()
         temp = self.enter_temp.get()
+        max_frag = int(self.enter_fragment_max.get())
+        min_frag = int(self.enter_fragment_min.get())
 
-        if self.filepath and delta_T and temp:
+        if self.filepath and delta_T and temp and max_frag and min_frag:
             self.run.config(state="normal")
             tk.messagebox.showinfo("Good values", "You can now press the run program button.")
             self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
@@ -102,6 +114,8 @@ class GUI:
         """
         delta_T = int(self.enter_deltaT.get())
         temp = int(self.enter_temp.get())
+        max_frag = int(self.enter_fragment_max.get())
+        min_frag = int(self.enter_fragment_min.get())
         self.text_area.insert(tk.INSERT, "Building trie.\n")
 
         trie = self.genome.build_trie(20)
@@ -125,8 +139,8 @@ class GUI:
         self.text_area.insert(tk.INSERT, "Generating primer pairs.\n")
 
         # self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
-        primer_pairs = forward(forward_primers, reverse_primers)
-        circular_pairs = circular(forward_primers, reverse_primers, self.genome)
+        primer_pairs = forward(forward_primers, reverse_primers, max_frag, min_frag)
+        circular_pairs = circular(forward_primers, reverse_primers, self.genome, max_frag, min_frag)
         self.primer_list = EcoRI_digest(primer_pairs, self.genome)
         self.circular_list = EcoRI_digest(circular_pairs, self.genome, circular=True)
         self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")

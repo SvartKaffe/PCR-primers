@@ -267,8 +267,8 @@ def search(trie, primers: dict, delta_t: int) -> dict:
 
 def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists of tuples":
     """
-    This is the function that pairs forward with reverse primers, it really slows down the program if it is given many
-    primers due to its O(n^2) complexity and other computations.
+    This function pairs forward with reverse primers, it really slows down the program if it is given many
+    primers due to its O(n^2) complexity and other computations. This Function is not used anymore.
     :param frw_primers: dictionary of forward primers
     :param rvs_primers: dictionary of reverse primers
     :param sequence: Sequence object
@@ -314,7 +314,7 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists o
     return primer_pairs, circular_pairs
 
 
-def forward(frw_primers: dict, rvs_primers: dict):
+def forward(frw_primers: dict, rvs_primers: dict, max_size: int, min_size: int):
     primer_pairs = []
 
     for frw_primer, frw_value in frw_primers.items():
@@ -323,13 +323,13 @@ def forward(frw_primers: dict, rvs_primers: dict):
             stop = rvs_value["start"]
             fragment_length = (stop - start + 1)
 
-            if 300 <= fragment_length <= 3000:
+            if min_size <= fragment_length <= max_size:
                 primer_pairs.append([frw_primer, rvs_primer, start, stop, fragment_length])
 
     return primer_pairs
 
 
-def circular(frw_primers: dict, rvs_primers: dict, sequence):
+def circular(frw_primers: dict, rvs_primers: dict, sequence, max_size: int, min_size: int):
     primer_pairs = []
     dna_length = sequence.sequence_length
 
@@ -339,7 +339,7 @@ def circular(frw_primers: dict, rvs_primers: dict, sequence):
             stop = rvs_value["start"]
             circular_length = (dna_length - start + stop + 1)
 
-            if 300 <= circular_length <= 3000:
+            if min_size <= circular_length <= max_size:
                 primer_pairs.append([frw_primer, rvs_primer, start, stop, circular_length])
 
     return primer_pairs
@@ -347,7 +347,6 @@ def circular(frw_primers: dict, rvs_primers: dict, sequence):
 
 def EcoRI_digest(primer_pairs: list, sequence, circular=False):
     dna = sequence.get_frw_sequence()
-    dna_length = sequence.sequence_length
     length = len(primer_pairs)
 
     if circular:
