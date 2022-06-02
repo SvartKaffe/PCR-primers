@@ -315,6 +315,14 @@ def sort_primers(frw_primers: dict, rvs_primers: dict, sequence) -> "two lists o
 
 
 def forward(frw_primers: dict, rvs_primers: dict, max_size: int, min_size: int):
+    """
+    Pairs forward primers with reverse primers that form a fragment of suitable length.
+    :param frw_primers: dictionary of primers
+    :param rvs_primers: dictionary of primers
+    :param max_size: max size of fragment
+    :param min_size: min size of fragment
+    :return: list of primer pairs along with other information
+    """
     primer_pairs = []
 
     for frw_primer, frw_value in frw_primers.items():
@@ -330,6 +338,15 @@ def forward(frw_primers: dict, rvs_primers: dict, max_size: int, min_size: int):
 
 
 def circular(frw_primers: dict, rvs_primers: dict, sequence, max_size: int, min_size: int):
+    """
+    Pairs forward with reverse primers, this looks for circular primer pairs.
+    :param frw_primers: dictionary of primers
+    :param rvs_primers: dictionary of primers
+    :param sequence: Sequence object used to get the sequence length
+    :param max_size: max fragment size
+    :param min_size: min fragment size
+    :return: list of circular primer pairs along with other information
+    """
     primer_pairs = []
     dna_length = sequence.sequence_length
 
@@ -346,6 +363,13 @@ def circular(frw_primers: dict, rvs_primers: dict, sequence, max_size: int, min_
 
 
 def EcoRI_digest(primer_pairs: list, sequence, circular=False):
+    """
+    This function digest a fragment, generated from a primer pairs, using EcoRI.
+    :param primer_pairs: list of primer pairs
+    :param sequence: sequence object
+    :param circular: is set to True to get right fragment if the pair is circular
+    :return: list of primer pairs along with the digestion map generated.
+    """
     dna = sequence.get_frw_sequence()
     length = len(primer_pairs)
 
