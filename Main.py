@@ -1,10 +1,10 @@
 from Sequence import Sequence
 from Primers import Primers
-from primer_algorithms import search, sort_primers
+from primer_algorithms import search, forward, circular, EcoRI_digest
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, Listbox, Scrollbar
 import tkinter.scrolledtext as st
-
+from operator import itemgetter
 
 class GUI:
     """
@@ -34,13 +34,23 @@ class GUI:
 
         self.temp_label = ttk.Label(self.frame, text="Enter annealing temperature:")
         self.temp_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
-        self.enter_temp = ttk.Entry(self.frame, width=35)
-        self.enter_temp.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
+        self.enter_temp = ttk.Entry(self.frame, width=10)
+        self.enter_temp.grid(row=2, column=1, padx=5, pady=10, sticky=tk.W)
 
         self.deltaT_label = ttk.Label(self.frame, text="Enter deltaT: \n(lower values = longer runtime):")
         self.deltaT_label.grid(row=3, column=0, padx=10, pady=10, sticky=tk.W)
-        self.enter_deltaT = ttk.Entry(self.frame, width=35)
-        self.enter_deltaT.grid(row=3, column=1, padx=10, pady=10, sticky=tk.W)
+        self.enter_deltaT = ttk.Entry(self.frame, width=10)
+        self.enter_deltaT.grid(row=3, column=1, padx=5, pady=10, sticky=tk.W)
+
+        self.fragment_label = ttk.Label(self.frame, text="Enter max fragment size:")
+        self.fragment_label.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
+        self.enter_fragment_max = ttk.Entry(self.frame, width=10)
+        self.enter_fragment_max.grid(row=2, column=3, padx=5, pady=10, sticky=tk.W)
+
+        self.fragment_label = ttk.Label(self.frame, text="Enter min fragment size:")
+        self.fragment_label.grid(row=3, column=2, padx=10, pady=10, sticky=tk.W)
+        self.enter_fragment_min = ttk.Entry(self.frame, width=10)
+        self.enter_fragment_min.grid(row=3, column=3, padx=5, pady=10, sticky=tk.W)
 
         self.filler1 = ttk.Label(self.frame, text="", style="text.TLabel")
         self.filler1.grid(row=4, column=0, padx=10, pady=10, sticky=tk.W)
@@ -58,11 +68,11 @@ class GUI:
         self.window_label = ttk.Label(self.frame, text="Messages will be displayed here:")
         self.window_label.grid(row=8, column=0, padx=10, pady=5, sticky=tk.W)
         self.text_area = st.ScrolledText(self.frame, width=65, height=20)
-        self.text_area.grid(row=9, column=0, padx=10, pady=5, columnspan=3, sticky=tk.W)
+        self.text_area.grid(row=9, column=0, padx=10, columnspan=3, pady=5, sticky=tk.W)
 
         self.display_primers_button = ttk.Button(self.frame, text="View primers", command=self.call_display_primers,
                                                  style="my.TButton", state=tk.DISABLED)
-        self.display_primers_button.grid(row=9, column=4, padx=20, pady=5, ipadx=10, ipady=5)
+        self.display_primers_button.grid(row=9, column=3, padx=20, pady=5, ipadx=10, ipady=5, sticky=tk.W)
 
     def file_dialog(self):
         """
@@ -86,10 +96,13 @@ class GUI:
         """
         delta_T = self.enter_deltaT.get()
         temp = self.enter_temp.get()
+        max_frag = int(self.enter_fragment_max.get())
+        min_frag = int(self.enter_fragment_min.get())
 
-        if self.filepath and delta_T and temp:
+        if self.filepath and delta_T and temp and max_frag and min_frag:
             self.run.config(state="normal")
             tk.messagebox.showinfo("Good values", "You can now press the run program button.")
+            self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
         else:
             tk.messagebox.showinfo("Missing values", "one or more values seems to be missing\nor you did not load in a"
                                                      " fasta file")
@@ -101,7 +114,8 @@ class GUI:
         """
         delta_T = int(self.enter_deltaT.get())
         temp = int(self.enter_temp.get())
-        self.text_area.insert(tk.INSERT, f"Delta_T = {delta_T}\nTemp = {temp}\n")
+        max_frag = int(self.enter_fragment_max.get())
+        min_frag = int(self.enter_fragment_min.get())
         self.text_area.insert(tk.INSERT, "Building trie.\n")
 
         trie = self.genome.build_trie(20)
@@ -124,7 +138,11 @@ class GUI:
         self.text_area.insert(tk.INSERT, "Done.\n")
         self.text_area.insert(tk.INSERT, "Generating primer pairs.\n")
 
-        self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
+        # self.primer_list, self.circular_list = sort_primers(forward_primers, reverse_primers, self.genome)
+        primer_pairs = forward(forward_primers, reverse_primers, max_frag, min_frag)
+        circular_pairs = circular(forward_primers, reverse_primers, self.genome, max_frag, min_frag)
+        self.primer_list = EcoRI_digest(primer_pairs, self.genome)
+        self.circular_list = EcoRI_digest(circular_pairs, self.genome, circular=True)
         self.text_area.insert(tk.INSERT, "Primer pairs generated, press ""View Primers"".\n")
         self.display_primers_button.config(state=tk.NORMAL)
 
@@ -155,8 +173,8 @@ class DisplayPrimers:
         self.parent = parent
         self.frame = ttk.Frame(self.parent)
         self.frame.pack()
-        self.normal_primer_list = primer_list
-        self.circular_primer_list = circular_list
+        self.normal_primer_list = sorted(primer_list, key=itemgetter(4))
+        self.circular_primer_list = sorted(circular_list, key=itemgetter(4))
         self.root = root
 
         self.title_label = ttk.Label(self.frame, text="Non-circular primer pairs:")
@@ -193,17 +211,17 @@ class DisplayPrimers:
 
         self.copy_primer_button = ttk.Button(self.frame, text="Select", command=self.copy_button,
                                              style='my.TButton')
-        self.copy_primer_button.grid(row=4, column=1, padx=10, pady=5)
+        self.copy_primer_button.grid(row=3, column=2, padx=10, pady=5)
 
-        # sort the lists
-        self.normal_primer_list.sort(key=lambda y: y[-4])
-        self.circular_primer_list.sort(key=lambda y: y[-4])
+        self.copy_primer_button2 = ttk.Button(self.frame, text="Select", command=self.copy_button2,
+                                              style='my.TButton')
+        self.copy_primer_button2.grid(row=5, column=2, padx=10, pady=5)
 
         # insert items into the list boxes
         for item in self.normal_primer_list:
-            self.list_box.insert("end", item)
+            self.list_box.insert(0, item)
         for item in self.circular_primer_list:
-            self.list_box2.insert("end", item)
+            self.list_box2.insert(0, item)
 
     def copy_button(self):
         """
@@ -212,6 +230,19 @@ class DisplayPrimers:
         """
         try:
             primer_info = self.list_box.get("anchor")
+            primers = primer_info[:2]
+            self.root.clipboard_clear()
+            self.root.clipboard_append(primers)
+        except:
+            tk.messagebox.showerror("Error")
+
+    def copy_button2(self):
+        """
+        Used to copy the selected item in the listbox
+        :return: nothing
+        """
+        try:
+            primer_info = self.list_box2.get("anchor")
             primers = primer_info[:2]
             self.root.clipboard_clear()
             self.root.clipboard_append(primers)

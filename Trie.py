@@ -1,4 +1,4 @@
-from primer_algorithms import complement
+from primer_algorithms import complement, temp_calc
 # Trie taken from https://albertauyeung.github.io/2020/06/15/python-trie.html/
 # The recursive function is heavily inspired by https://github.com/volpato30/hamming-d-search/blob/master/trie.py
 # and https://albertauyeung.github.io/2020/06/15/python-trie.html/
@@ -87,12 +87,12 @@ class Trie:
 
         for nucleotide in root_node.children:
             self.recursive_search(root_node.children[nucleotide], result, current_index, current_cost, primer,
-                                  nucleotide, delta_t, nucleotide)
+                                  nucleotide, delta_t)
 
         return result
 
     def recursive_search(self, node: TrieNode, result: list, current_index: int,
-                         current_cost: int, primer: str, nucleotide: str, delta_t: int, sequence: str):
+                         current_cost: int, primer: str, nucleotide: str, delta_t: int):
         """
         The recursive part of the search function. Iterates through all the nodes in the trie unless aborted early.
 
@@ -103,11 +103,10 @@ class Trie:
         :param primer: the primer which is being aligned to the genome
         :param nucleotide: Nucleotide of the current/next node
         :param delta_t: the Ta value (delta_t)
-        :param sequence: the current path taken in the trie
         :return: nothing
         """
 
-        # if the list has 2 elements it means that the primer has 2 positions within specified Ta
+        # needed to successfully terminate search
         if len(result) > 0:
             return
 
@@ -135,10 +134,11 @@ class Trie:
 
         current_index += 1
 
-        # if at the end of a branch and current path != the primer, add 1 to the list, it means that the current primer
-        # has a location in the genome which is within the specified delta_t value (Ta)
+        # if at the end of a branch, current_cost = 0, a per
+        # it means that the current primer has a location in the genome which is within the specified
+        # delta_t value (Ta), it is added to the result list and search is aborted for the primer
         if node.is_end:
-            if sequence == primer:
+            if current_cost == 0:
                 return
             else:
                 result.append(1)
@@ -146,7 +146,7 @@ class Trie:
         # continuation of the recursive search
         for nucleotide in node.children:
             self.recursive_search(node.children[nucleotide], result, current_index, current_cost, primer, nucleotide,
-                                  delta_t, sequence+nucleotide)
+                                  delta_t)
 
 
 if __name__ == "__main__":
@@ -155,6 +155,14 @@ if __name__ == "__main__":
     t.insert("GATCG")
     t.insert("ATGCC")
     t.insert("AGCGT")
+    t.insert("TCTGA")
 
-    debug = t.hamming_distance("GGGGG", 10)
+    debug = t.hamming_distance("GTACT", 10)
     print(debug)
+"""
+        if node.is_end:
+            if current_cost == 0:
+                return
+            else:
+                result.append(1)
+"""

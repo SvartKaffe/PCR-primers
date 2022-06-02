@@ -17,6 +17,7 @@ class Sequence:
         for sequence in SeqIO.parse(file, "fasta"):
             self.frw_sequence = sequence.seq
             self.rvs_sequence = sequence.reverse_complement().seq
+        self.sequence_length = len(self.frw_sequence)
 
     def get_frw_sequence(self) -> "biopython Seq object":
         """
