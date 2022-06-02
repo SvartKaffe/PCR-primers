@@ -117,14 +117,13 @@ class Trie:
             if primer[current_index] in ("A", "T"):
                 current_cost += 2
         if not (nucleotide == primer[current_index]):
-            base, sum = complement(primer[current_index])
-            if primer[current_index] == "A" and not nucleotide == base:
+            if primer[current_index] == "A" and not nucleotide == "T":
                 current_cost += 2
-            if primer[current_index] == "T" and not nucleotide == base:
+            if primer[current_index] == "T" and not nucleotide == "A":
                 current_cost += 2
-            if primer[current_index] == "G" and not nucleotide == base:
+            if primer[current_index] == "G" and not nucleotide == "C":
                 current_cost += 4
-            if primer[current_index] == "C" and not nucleotide == base:
+            if primer[current_index] == "C" and not nucleotide == "G":
                 current_cost += 4
 
         # checks if the current primer has a bigger delta_t value than user specified one,
