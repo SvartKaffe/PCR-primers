@@ -158,10 +158,3 @@ if __name__ == "__main__":
 
     debug = t.hamming_distance("GTACT", 10)
     print(debug)
-"""
-        if node.is_end:
-            if current_cost == 0:
-                return
-            else:
-                result.append(1)
-"""

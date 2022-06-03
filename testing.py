@@ -12,7 +12,7 @@ This file is used for testing purposes.
 # timer
 start_read_build = time.time()
 # read in genome
-object1 = Sequence("fasta_files\\40k.fasta")
+object1 = Sequence("fasta_files\\10k.fasta")
 # build trie
 trie = object1.build_trie(20)
 end_read_build = time.time()
@@ -27,8 +27,8 @@ end_filter = time.time()
 
 start_search = time.time()
 # go through the trie
-forward_primers = search(trie, primers.get_frw_primers(), 18)
-reverse_primers = search(trie, primers.get_rvs_primers(), 18)
+forward_primers = search(trie, primers.get_frw_primers(), 20)
+reverse_primers = search(trie, primers.get_rvs_primers(), 20)
 end_search = time.time()
 
 print("\n")
@@ -37,8 +37,8 @@ print("\n")
 
 start_pair = time.time()
 
-primer_pairs = forward(forward_primers, reverse_primers)
-circular_pairs = circular(forward_primers, reverse_primers, object1)
+primer_pairs = forward(forward_primers, reverse_primers, 3000, 300)
+circular_pairs = circular(forward_primers, reverse_primers, object1, 3000, 300)
 primer_pairs = EcoRI_digest(primer_pairs, object1)
 circular_pairs = EcoRI_digest(circular_pairs, object1)
 
