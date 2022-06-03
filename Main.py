@@ -32,12 +32,12 @@ class GUI:
         self.file_name = ttk.Label(self.frame, text="", style="text.TLabel")
         self.file_name.grid(row=1, column=1, padx=10, pady=10, columnspan=10, sticky=tk.W)
 
-        self.temp_label = ttk.Label(self.frame, text="Enter annealing temperature:")
+        self.temp_label = ttk.Label(self.frame, text="Enter primer temperature:")
         self.temp_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
         self.enter_temp = ttk.Entry(self.frame, width=10)
         self.enter_temp.grid(row=2, column=1, padx=5, pady=10, sticky=tk.W)
 
-        self.deltaT_label = ttk.Label(self.frame, text="Enter deltaT: \n(lower values = longer runtime):")
+        self.deltaT_label = ttk.Label(self.frame, text="Enter DeltaT: \n(lower values = longer runtime):")
         self.deltaT_label.grid(row=3, column=0, padx=10, pady=10, sticky=tk.W)
         self.enter_deltaT = ttk.Entry(self.frame, width=10)
         self.enter_deltaT.grid(row=3, column=1, padx=5, pady=10, sticky=tk.W)
@@ -177,7 +177,7 @@ class DisplayPrimers:
         self.circular_primer_list = sorted(circular_list, key=itemgetter(4))
         self.root = root
 
-        self.title_label = ttk.Label(self.frame, text="Non-circular primer pairs:")
+        self.title_label = ttk.Label(self.frame, text="Normal primer pairs:")
         self.title_label.grid(row=0, column=0, sticky=tk.W)
 
         self.box_label = ttk.Label(self.frame, text="forward primer:\t|  Reverse primer:\t| Start:\t| Stop:\t"
